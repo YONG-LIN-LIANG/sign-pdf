@@ -5,12 +5,11 @@ import {
   // Navigate,
   // useLocation
 } from "react-router-dom"
-
-import React from "react"
 import Login from "./pages/Login"
 import Overview from "./pages/Overview"
 import Sign from "./pages/Sign"
 import History from "./pages/History"
+import Layout from "./components/Layout/Layout"
 function App() {
 
   return (
@@ -19,12 +18,14 @@ function App() {
     //   <h3>繪製簽名檔</h3>
     //   <SignFile></SignFile>
     // </div>
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/overview" element={<Overview />} />
-      <Route path="/sign" element={<Sign />} />
-      <Route path="/history" element={<History />} />
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/overview" element={<Overview />} />
+        <Route path="/sign" element={<Sign />} />
+        <Route path="/history" element={<History />} />
+      </Routes>
+    </Layout>
   )
 }
 
