@@ -19,3 +19,11 @@
 .featureList + .featureList {
   @apply mt-[8px];
 }
+
+.cardStyle {
+  @apply flex flex-col w-[234px] min-h-[380px] px-[38px] pt-[20px] rounded-[30px] rounded-br-[2px] bg-[#ffffff80] hover:shadow-[0_4px_32px_rgba(178,167,209,0.5)] transition-all ease-in-out duration-500;
+}
+
+.cardStyle + .cardStyle {
+  @apply ml-[40px];
+}
