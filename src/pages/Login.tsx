@@ -1,5 +1,4 @@
 import CheckedIcon from "../components/svg/Checked"
-import { useState } from "react"
 import { Link } from "react-router-dom"
 const Login = () => {
   const featureList = [
