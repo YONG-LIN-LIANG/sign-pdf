@@ -67,7 +67,7 @@ const CreateSign = () => {
                 signList.length 
                 ? signList.map(sign => (
                   <li className="signCard w-[160px] p-[8px] bg-[#FFFFFF80]">
-                    <h5>{ sign.name }</h5>
+                    <h5 className="mb-[8px] text-[14px]">{ sign.name }</h5>
                     <img src={ sign.image } alt="" />
                   </li>
                 ))
