@@ -11,12 +11,15 @@
   "dependencies": {
     "formik": "^2.2.9",
     "jotai": "^1.9.0",
+    "module-name": "^0.0.1-security",
+    "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.3",
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@types/node": "^18.11.9",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.1.0",

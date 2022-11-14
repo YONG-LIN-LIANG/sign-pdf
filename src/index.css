@@ -2,12 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+input {
+  @apply pl-[16px] outline-none;
+}
+
 @layer components {
   .flex-center {
     @apply flex justify-center items-center;
   }
 }
-
+.signInput::placeholder {
+  @apply text-[#BDBDBD];
+}
 .loginInput::placeholder {
   @apply text-[12px] text-[#595ED3CC];
 }
@@ -27,3 +33,18 @@
 .cardStyle + .cardStyle {
   @apply ml-[40px];
 }
+
+.signCard + .signCard {
+  @apply mt-[14px];
+}
+
+/* customized scroll bar */
+.ctr-scrollbar::-webkit-scrollbar {
+  @apply w-1 h-1 mr-1 bg-transparent;
+}
+.ctr-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-[#BDBDBD] rounded-full;
+}
+/* .ctr-scrollbar.scrollbar-cloudGray::-webkit-scrollbar-thumb {
+  @apply bg-sec-cloudGray;
+} */
