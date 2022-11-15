@@ -1,7 +1,11 @@
-const History = () => (
-  <div>
-    history page
-  </div>
-)
+const History = () => {
+
+  return (
+    <section>
+      
+    </section>
+  )
+  
+}
 
 export default History

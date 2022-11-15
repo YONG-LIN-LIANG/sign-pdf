@@ -8,8 +8,10 @@ import StartSign from "@/components/sign/StartSign"
 import DownloadResult from "@/components/sign/DownloadResult"
 import { useState } from "react"
 const Sign = () => {
-  const [currentStep, setCurrentStep] = useState(1)
-
+  const [currentStep, setCurrentStep] = useState(3)
+  const handleSwitchStep = (step: number) => {
+    setCurrentStep(step)
+  }
   const stepList = [
     {
       id: 1,
@@ -72,7 +74,28 @@ const Sign = () => {
         ? <DownloadResult />
         : null
       }
-      
+
+      {/* step也用全局狀態管理 */}
+      <div className="flex justify-center mt-[60px]">
+        {
+          currentStep !== 1 && <button className="flex-center w-[180px] h-[40px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(currentStep - 1)}>上一步</button>
+        }
+        {
+          currentStep === 1 && <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(currentStep + 1)}>下一步</button>
+        }
+        {
+          currentStep === 2
+          ? <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(3)}>前往簽名</button>
+          : currentStep === 3
+          ? <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(4)}>前往下載</button>
+          : currentStep === 4
+          ? <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full">下載pdf</button>
+          : null
+        }
+        {
+          currentStep === 4 && <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full">再簽一份</button>
+        }
+      </div>
     </section>
   )
 }
