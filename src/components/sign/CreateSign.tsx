@@ -2,7 +2,8 @@ import Pencil from "@/components/svg/Pencil"
 import UploadIcon from "@/components/svg/Upload"
 import LastIcon from "@/components/svg/Last"
 import NextIcon from "@/components/svg/Next"
-import TrashcanIcon from "@/components/svg/Trashcan"
+import UploadArea from "@/components/sign/UploadArea"
+import MySign from "@/components/sign/MySign"
 import { useState } from "react"
 const CreateSign = () => {
   const [isCreateSign, setIsCreateSign] = useState(false)
@@ -59,24 +60,7 @@ const CreateSign = () => {
 
       <div className="flex mt-[40px]">
         {/* 我的簽名檔(左側) */}
-        <div className="flex-none w-[188px]">
-          <h4 className="text-[#4F4F4F]">我的簽名檔</h4>
-          <div className="mt-[20px] pt-[12px] pr-[4px] border border-[#FFFFFF] rounded-[5px]">
-            <ul className="ctr-scrollbar overflow-y-auto flex flex-col items-center h-[500px]">
-              {
-                signList.length 
-                ? signList.map(sign => (
-                  <li className="signCard w-[160px] p-[8px] bg-[#FFFFFF80]">
-                    <h5 className="mb-[8px] text-[14px]">{ sign.name }</h5>
-                    <img src={ sign.image } alt="" />
-                  </li>
-                ))
-                : <div>目前無簽名</div> 
-              }
-              
-            </ul>
-          </div>
-        </div>
+        <MySign signList={signList} />
         {/* 右側 */}
         <div className="flex-grow ml-[40px]">
           <div>
@@ -104,27 +88,7 @@ const CreateSign = () => {
               </div>
             ):(
               <div>
-                <div className="flex flex-col justify-center items-center w-full h-[245px] border border-[#fff] bg-[#FFFFFF80] rounded-[5px]">
-                  <div className="text-[#787CDA]">
-                    <UploadIcon />
-                  </div>
-                  <span className="mt-[12px] mb-[8px]">拖曳至此上傳</span>
-                  <span>或</span>
-                  <button className="w-[86px] h-[32px] mt-[8px] mb-[20px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]">選擇檔案</button>
-                  <div className="flex flex-col text-[12px] text-[#595ED3]">
-                    <span>檔案格式png／jpg</span>
-                    <span>檔案大小＜1MB</span>
-                  </div>
-                </div>
-
-                <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">預覽簽名檔</h4>
-                <div className="flex-center">
-                  <div className="flex flex-col items-center text-[#595ED3]">
-                    <TrashcanIcon />
-                    <span className="mt-[12px]">請上傳檔案</span>
-                  </div>
-                  
-                </div>
+                <UploadArea />
                 <button className="flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
               </div>
             )
@@ -132,8 +96,6 @@ const CreateSign = () => {
           
         </div>
       </div>
-
-      <button className="flex-center w-[180px] h-[40px] mt-[60px] mx-auto text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full">下一步</button>
     </section>
   )
 }
