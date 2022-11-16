@@ -8,7 +8,7 @@ import StartSign from "@/components/sign/StartSign"
 import DownloadResult from "@/components/sign/DownloadResult"
 import { useState } from "react"
 const Sign = () => {
-  const [currentStep, setCurrentStep] = useState(3)
+  const [currentStep, setCurrentStep] = useState(1)
   const handleSwitchStep = (step: number) => {
     setCurrentStep(step)
   }
