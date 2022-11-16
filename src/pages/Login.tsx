@@ -11,8 +11,8 @@ const Login = () => {
       <form className={`${cardStyle}`}>
         <h4 className="text-purple text-center">登入</h4>
         <ul className="my-[32px] text-[14px]">
-          {featureList.map(feature => (
-            <li className="featureList flex items-center">
+          {featureList.map((feature, index) => (
+            <li key={index} className="featureList flex items-center">
               <CheckedIcon />
               <span className="ml-[9px] text-[#4F4F4F]">{ feature }</span>
             </li>

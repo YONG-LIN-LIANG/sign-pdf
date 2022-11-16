@@ -15,42 +15,46 @@ const Sign = () => {
   const stepList = [
     {
       id: 1,
-      name: '建立簽名檔'
+      name: '建立簽名檔',
+      style: 'left-[-17px]'
     },
     {
       id: 2,
-      name: '上傳簽署文件'
+      name: '上傳簽署文件',
+      style: 'left-[-22px]'
     },
     {
       id: 3,
-      name: '簽名'
+      name: '簽名',
+      style: ''
     },
     {
       id: 4,
-      name: '下載簽署文件'
+      name: '下載簽署文件',
+      style: 'right-[-25px]'
     },
   ]
   return (
     <section className="mx-auto">
-      <div className="w-[628px] mx-auto mb-[68px]">
-        <div className="flex">
-          <div className="text-[#F2F2F2]">
+      <div className="w-[535px] mx-auto mb-[68px]">
+        <div className="flex items-end">
+          <div className="text-[#787CDA]">
             <ProgressBar1/>
           </div>
-          <div className="text-[#F2F2F2]">
+          <div className={`${ currentStep > 1 ? 'text-[#787CDA]' : 'text-[#F2F2F2]' } relative left-[-12px]`}>
             <ProgressBar2/>
           </div>
-          <div className="text-[#F2F2F2]">
+          <div className={`${ currentStep > 2 ? 'text-[#787CDA]' : 'text-[#F2F2F2]' } relative left-[-25px]`}>
             <ProgressBar3/>
           </div>
-          <div className="text-[#F2F2F2]">
+          <div className={`${ currentStep > 3 ? 'text-[#787CDA]' : 'text-[#F2F2F2]' } relative left-[-40px]`}>
             <ProgressBar4/>
           </div>
         </div>
         <div className="flex justify-between">
           {
-            stepList.map(step => (
-              <div className={`flex flex-col items-center ${currentStep === step.id ? 'text-[#333333]' : 'text-[#BDBDBD]'}`}>
+            stepList.map((step, index) => (
+              <div key={index} className={`${step.style} relative flex flex-col items-center ${currentStep === step.id ? 'text-[#333333]' : currentStep > step.id ? 'text-[#787CDA]' : 'text-[#BDBDBD]'}`}>
                 <span className="text-[12px]">step{step.id}</span>
                 <div className="relative">
                   <h3 className="relative z-[3] text-[18px]">{step.name}</h3>

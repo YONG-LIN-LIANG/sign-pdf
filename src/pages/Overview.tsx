@@ -33,8 +33,8 @@ const Overview = () => {
       <h4 className="mt-[30px] mb-[60px] text-[18px]">簽名流程</h4>
       <div className="flex">
         {
-          stepList.map(step => (
-            <div className="cardStyle text-center">
+          stepList.map((step, index) => (
+            <div key={index} className="cardStyle text-center">
               <h5 className="text-[#787CDA] text-[14px]">step { step.id }</h5>
               <h2 className="mt-[10px]">{ step.title }</h2>
               <div className="flex flex-col mt-[32px] text-[14px] text-[#828282]">

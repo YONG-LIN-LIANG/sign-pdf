@@ -25,6 +25,7 @@ const CreateSign = () => {
   const [drawing, setDrawing] = useState<boolean>(false)
   const drawingBoardRef = useRef<HTMLDivElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  // const [restoreArray
   const [signList, setSignList] = useState([
     {
       name: '正楷正楷正楷正楷正楷正楷正楷正楷2020',
@@ -168,7 +169,7 @@ const CreateSign = () => {
               <div ref={drawingBoardRef}>
                 <div className="relative w-[586px] h-[340px] bg-[#fff] rounded-[5px]">
                     <canvas
-                    style={{ background: "#EEE" }}
+                    className="bg-[#fff]"
                     ref={canvasRef}
                     width={drawingBoard.width}
                     height={drawingBoard.height}

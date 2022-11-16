@@ -6,8 +6,8 @@ const MySign = ({ signList }: {name: string, image: string}[] | any) => {
         <ul className="ctr-scrollbar overflow-y-auto flex flex-col items-center h-[500px]">
           {
             signList.length 
-            ? signList.map((sign: {name: string, image: string} | any) => (
-              <li className="signCard w-[160px] p-[8px] bg-[#FFFFFF80]">
+            ? signList.map((sign: {name: string, image: string} | any, index) => (
+              <li key={index} className="signCard w-[160px] p-[8px] bg-[#FFFFFF80]">
                 <h5 className="mb-[8px] text-[14px]">{ sign.name }</h5>
                 <img src={ sign.image } alt="" />
               </li>
