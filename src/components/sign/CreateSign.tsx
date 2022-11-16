@@ -4,9 +4,27 @@ import LastIcon from "@/components/svg/Last"
 import NextIcon from "@/components/svg/Next"
 import UploadArea from "@/components/sign/UploadArea"
 import MySign from "@/components/sign/MySign"
-import { useState } from "react"
+import getTouchPos from "../../utils/getTouchPos"
+import getMousePos from "../../utils/getMousePos"
+import React, { useState, useRef, useEffect } from "react"
 const CreateSign = () => {
-  const [isCreateSign, setIsCreateSign] = useState(false)
+  interface HandleCanvasInterface {
+    target: HTMLCanvasElement;
+    preventDefault: any
+  }
+
+  const [isCreateSign, setIsCreateSign] = useState<boolean>(true)
+  const [drawingBoard, setDrawingBoard] = useState<{width: number | undefined, height: number | undefined}>({
+    width: 0,
+    height: 0
+  })
+  const [boardEditBtn, setBoardEditBtn] = useState<boolean>(true)
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
+  const [src, setSrc] = useState(null)
+  const [drawing, setDrawing] = useState<boolean>(false)
+  const drawingBoardRef = useRef<HTMLDivElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [signList, setSignList] = useState([
     {
       name: '正楷正楷正楷正楷正楷正楷正楷正楷2020',
@@ -33,8 +51,79 @@ const CreateSign = () => {
       image: '/src/assets/image/mockSign1.png'
     },
   ])
+
+  useEffect(() => {
+    if(drawingBoardRef !== null && canvasRef !== null) {
+      setDrawingBoard({
+        ...drawingBoard,
+        width: drawingBoardRef.current?.offsetWidth,
+        height: drawingBoardRef.current?.offsetHeight
+      })
+      const c = canvasRef.current
+      setCanvas(c)
+      if(c) setCtx(c.getContext("2d"))
+    }
+  }, [drawingBoardRef, canvasRef])
   const [signName, setSignName] = useState('')
   const tabStyle = "flex items-center px-[20px] py-[8px] rounded-full cursor-pointer"
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    setDrawing(true)
+    setBoardEditBtn(false)
+    console.log(drawing)
+    const touchPos = getTouchPos(canvas, e)
+    ctx?.beginPath()
+    ctx?.moveTo(touchPos.x, touchPos.y)
+    e.preventDefault()
+  }
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if(!drawing) return
+    const touchPos = getTouchPos(canvas, e)
+    if(ctx !== null) {
+      ctx.lineWidth = 2
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.shadowColor = "black"
+      ctx.lineTo(touchPos.x, touchPos.y)
+      ctx.stroke()
+    }
+  }
+  const handleTouchEnd = () => {
+    setDrawing(false)
+    setBoardEditBtn(true)
+    console.log(drawing)
+  }
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    setDrawing(true)
+    setBoardEditBtn(false)
+    console.log(drawing)
+    const mousePos = getMousePos(canvas, e)
+    if(ctx !== null) {
+      ctx.beginPath()
+      ctx.moveTo(mousePos.x, mousePos.y)
+      e.preventDefault()
+    }
+  }
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if(!drawing) return
+    const mousePos = getMousePos(canvas, e)
+    if(ctx !== null) {
+      ctx.lineWidth = 2
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.shadowColor = "black"
+      ctx.lineTo(mousePos.x, mousePos.y)
+      ctx.stroke()
+    }
+  }
+  const handleMouseUp = () => {
+    setDrawing(false)
+    setBoardEditBtn(true)
+  }
+
+  const handleClear = () => {
+    if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height)
+  }
   return (
     <section className="w-[820px]">
       <ul className="flex w-max mx-auto bg-[#FFFFFF80] rounded-full px-[10px] py-[8.5px]">
@@ -76,13 +165,29 @@ const CreateSign = () => {
           {
             isCreateSign 
             ?(
-              <div>
+              <div ref={drawingBoardRef}>
                 <div className="relative w-[586px] h-[340px] bg-[#fff] rounded-[5px]">
-                    <div className="flex absolute top-[14px] right-[14px]">
+                    <canvas
+                    style={{ background: "#EEE" }}
+                    ref={canvasRef}
+                    width={drawingBoard.width}
+                    height={drawingBoard.height}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    >
+                    </canvas>
+                    {
+                      boardEditBtn && <div className="flex absolute top-[14px] right-[14px]">
                       <button className={`flex-center w-[32px] h-[32px] rounded-[5px]`}><LastIcon /></button>
                       <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px]`}><NextIcon /></button>
-                      <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`}>清楚</button>
+                      <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`} onClick={() => handleClear()}>清除</button>
                     </div>
+                    }
+                    
                 </div>
                 <button className="flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
               </div>
