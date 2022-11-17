@@ -2,7 +2,7 @@ import SignFile from "./components/sign"
 import {
   Route,
   Routes,
-  // Navigate,
+  Navigate,
   // useLocation
 } from "react-router-dom"
 import Login from "./pages/Login"
@@ -24,6 +24,10 @@ function App() {
         <Route path="/overview" element={<Overview />} />
         <Route path="/sign" element={<Sign />} />
         <Route path="/history" element={<History />} />
+        <Route
+          path="/"
+          element={<Navigate replace to="/login" />}
+        />
       </Routes>
     </Layout>
   )
