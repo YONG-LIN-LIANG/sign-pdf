@@ -30,13 +30,11 @@ const Login = () => {
         </div>
         
       </form>
-      <form className={`${cardStyle} ml-[30px]`}>
+      <div className={`${cardStyle} ml-[30px]`}>
         <h4 className="text-purple text-center">快速簽名</h4>
         <span className="mt-[32px] text-center text-[14px]">免登入快速簽名</span>
-        <button className={`${buttonStyle} mt-auto`}>
-          <Link to="/">前往簽名</Link>
-        </button>
-      </form>
+        <Link to="/sign" className={`${buttonStyle} mt-auto`}>前往簽名</Link>
+      </div>
     </section>
   )
 }

@@ -80,7 +80,7 @@ const CreateSign = () => {
     }
   }, [drawingBoardRef, canvasRef])
   const [signName, setSignName] = useState('')
-  const tabStyle = "flex items-center px-[20px] py-[8px] rounded-full cursor-pointer"
+  const tabStyle = "relative z-[5] flex items-center px-[20px] py-[8px] rounded-full cursor-pointer"
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     setDrawing(true)
@@ -137,10 +137,10 @@ const CreateSign = () => {
   }
   return (
     <section className="w-[820px]">
-      <ul className="flex w-max mx-auto bg-[#FFFFFF80] rounded-full px-[10px] py-[8.5px]">
+      <ul className="relative flex w-max mx-auto bg-[#FFFFFF80] rounded-full px-[10px] py-[8.5px]">
         <li 
           className={
-            `${tabStyle} ${isCreateSign ? 'text-[#fff] bg-[#595ED3]' : 'text-[#828282]'}`
+            `${tabStyle} animation select-none ${isCreateSign ? 'text-[#fff]' : 'text-[#828282]'}`
           } 
           onClick={() => setIsCreateSign(true)}
         >
@@ -149,13 +149,15 @@ const CreateSign = () => {
         </li>
         <li 
           className={
-            `${tabStyle} ${!isCreateSign ? 'text-[#fff] bg-[#595ED3]' : 'text-[#828282]'}`
+            `${tabStyle} animation select-none ${!isCreateSign ? 'text-[#fff]' : 'text-[#828282]'}`
           } 
           onClick={() => setIsCreateSign(false)}
         >
           <div className={!isCreateSign ? '#E5E6F2' : ''}><UploadIcon /></div>
           <span className="ml-[8px]">上傳簽名檔</span>
         </li>
+        {/* 移動背景塊 */}
+        <div className={`animation absolute select-none ${isCreateSign ? 'left-[10px] z-[2] w-[132px]' : 'left-[142px] z-[2] w-[144px]'} top-[8.5px] h-[40px] bg-[#595ED3] rounded-full`}></div>
       </ul>
 
       <div className="flex mt-[40px]">
