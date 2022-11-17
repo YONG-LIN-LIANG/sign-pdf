@@ -57,7 +57,7 @@ const Sign = () => {
               <div key={index} className={`${step.style} relative flex flex-col items-center ${currentStep === step.id ? 'text-[#333333]' : currentStep > step.id ? 'text-[#787CDA]' : 'text-[#BDBDBD]'}`}>
                 <span className="text-[12px]">step{step.id}</span>
                 <div className="relative">
-                  <h3 className="relative z-[3] text-[18px]">{step.name}</h3>
+                  <h3 className="relative z-[3] text-[18px] font-medium">{step.name}</h3>
                   {
                     currentStep === step.id && <div className="absolute left-[10px] right-[10px] top-0 bottom-0 m-auto h-[8px] bg-[#E3FEC7]"></div>
                   }

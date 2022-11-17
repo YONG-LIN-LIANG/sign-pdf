@@ -4,24 +4,38 @@ import LastIcon from "@/components/svg/Last"
 import NextIcon from "@/components/svg/Next"
 import UploadArea from "@/components/sign/UploadArea"
 import MySign from "@/components/sign/MySign"
+import ColorPickerIcon from "@/components/svg/ColorPicker"
+import ActiveColorPickerIcon from "@/components/svg/ActiveColorPicker"
 import getTouchPos from "../../utils/getTouchPos"
 import getMousePos from "../../utils/getMousePos"
 import React, { useState, useRef, useEffect } from "react"
 const CreateSign = () => {
-  interface HandleCanvasInterface {
-    target: HTMLCanvasElement;
-    preventDefault: any
-  }
-
   const [isCreateSign, setIsCreateSign] = useState<boolean>(true)
   const [drawingBoard, setDrawingBoard] = useState<{width: number | undefined, height: number | undefined}>({
     width: 0,
     height: 0
   })
-  const [boardEditBtn, setBoardEditBtn] = useState<boolean>(true)
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
   const [src, setSrc] = useState(null)
+  const [colorPicker, setColorPicker] = useState({
+    activeStyle: 'text-[#000]',
+    activeColor: '#000',
+    list : [
+      {
+        style: 'text-[#000]',
+        color: '#000'
+      },
+      {
+        style: 'text-[#0400C0]',
+        color: '#0400C0'
+      },
+      {
+        style: 'text-[#C00000]',
+        color: '#C00000'
+      },
+    ]
+  })
   const [drawing, setDrawing] = useState<boolean>(false)
   const drawingBoardRef = useRef<HTMLDivElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -70,7 +84,6 @@ const CreateSign = () => {
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     setDrawing(true)
-    setBoardEditBtn(false)
     console.log(drawing)
     const touchPos = getTouchPos(canvas, e)
     ctx?.beginPath()
@@ -84,19 +97,17 @@ const CreateSign = () => {
       ctx.lineWidth = 2
       ctx.lineCap = "round"
       ctx.lineJoin = "round"
-      ctx.shadowColor = "black"
+      ctx.strokeStyle = colorPicker.activeColor
       ctx.lineTo(touchPos.x, touchPos.y)
       ctx.stroke()
     }
   }
   const handleTouchEnd = () => {
     setDrawing(false)
-    setBoardEditBtn(true)
     console.log(drawing)
   }
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setDrawing(true)
-    setBoardEditBtn(false)
     console.log(drawing)
     const mousePos = getMousePos(canvas, e)
     if(ctx !== null) {
@@ -112,14 +123,13 @@ const CreateSign = () => {
       ctx.lineWidth = 2
       ctx.lineCap = "round"
       ctx.lineJoin = "round"
-      ctx.shadowColor = "black"
+      ctx.strokeStyle = colorPicker.activeColor
       ctx.lineTo(mousePos.x, mousePos.y)
       ctx.stroke()
     }
   }
   const handleMouseUp = () => {
     setDrawing(false)
-    setBoardEditBtn(true)
   }
 
   const handleClear = () => {
@@ -163,43 +173,49 @@ const CreateSign = () => {
 
           <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">簽名圖樣<span className="ml-[4px] text-[#FF7070]">*</span></h4>
           {/* 手寫簽名 */}
-          {
-            isCreateSign 
-            ?(
-              <div ref={drawingBoardRef}>
-                <div className="relative w-[586px] h-[340px] bg-[#fff] rounded-[5px]">
-                    <canvas
-                    className="bg-[#fff]"
-                    ref={canvasRef}
-                    width={drawingBoard.width}
-                    height={drawingBoard.height}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
-                    >
-                    </canvas>
-                    {
-                      boardEditBtn && <div className="flex absolute top-[14px] right-[14px]">
-                      <button className={`flex-center w-[32px] h-[32px] rounded-[5px]`}><LastIcon /></button>
-                      <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px]`}><NextIcon /></button>
-                      <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`} onClick={() => handleClear()}>清除</button>
-                    </div>
-                    }
-                    
+          <div ref={drawingBoardRef} className={isCreateSign ? '' : 'invisible absolute -z-[10]'}>
+            <div className="relative w-[586px] h-[340px] bg-[#fff] rounded-[5px]">
+                <canvas
+                className="bg-[#fff]"
+                ref={canvasRef}
+                width={drawingBoard.width}
+                height={drawingBoard.height}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                >
+                </canvas>
+                {
+                  !drawing && <div className="flex absolute top-[14px] right-[14px]">
+                  <button className={`flex-center w-[32px] h-[32px] rounded-[5px]`}><LastIcon /></button>
+                  <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px]`}><NextIcon /></button>
+                  <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`} onClick={() => handleClear()}>清除</button>
                 </div>
-                <button className="flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
-              </div>
-            ):(
-              <div>
-                <UploadArea />
-                <button className="flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
-              </div>
-            )
-          }
-          
+                }
+                {
+                  !drawing && 
+                  <div className="flex absolute left-[20px] top-[14px]">
+                    {colorPicker.list.map((picker,idx) => (
+                    <div key={idx} className="colorPicker flex-center relative w-[36px] h-[32px] cursor-pointer" onClick={() => setColorPicker({...colorPicker, activeStyle: picker.style, activeColor: picker.color})}>
+                        {picker.style === colorPicker.activeStyle && <div className="absolute"><ActiveColorPickerIcon /></div>}
+                        <div className={`relative z-[10] ${picker.style}`}><ColorPickerIcon /></div>
+                      </div>
+                    ))}
+                  </div>
+                }
+                
+            </div>
+            <button className="flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
+          </div>
+        
+          <div className={isCreateSign ? 'hidden' : ''}>
+            <UploadArea />
+            <button className="flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
+          </div>
+            
         </div>
       </div>
     </section>

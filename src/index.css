@@ -1,9 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
 input {
   @apply pl-[16px] outline-none;
+}
+
+* {
+  @apply p-0 m-0 box-border;
+}
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  /* font-family: 'Roboto', sans-serif; */
 }
 
 @layer components {
@@ -45,6 +56,11 @@ input {
 .ctr-scrollbar::-webkit-scrollbar-thumb {
   @apply bg-[#BDBDBD] rounded-full;
 }
-/* .ctr-scrollbar.scrollbar-cloudGray::-webkit-scrollbar-thumb {
-  @apply bg-sec-cloudGray;
-} */
+
+.dragover {
+  @apply bg-[#E3FEC733];
+}
+
+.colorPicker + .colorPicker {
+  @apply ml-[12px];
+}
