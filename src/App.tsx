@@ -1,4 +1,4 @@
-import SignFile from "./components/Sign"
+import SignFile from "./components/sign"
 import {
   Route,
   Routes,
