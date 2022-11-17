@@ -49,6 +49,10 @@ body {
   @apply mt-[14px];
 }
 
+.signCard:hover button {
+  @apply opacity-100;
+}
+
 /* customized scroll bar */
 .ctr-scrollbar::-webkit-scrollbar {
   @apply w-1 h-1 mr-1 bg-transparent;

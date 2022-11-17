@@ -175,8 +175,8 @@ const CreateSign = () => {
 
           <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">簽名圖樣<span className="ml-[4px] text-[#FF7070]">*</span></h4>
           {/* 手寫簽名 */}
-          <div ref={drawingBoardRef} className={isCreateSign ? '' : 'invisible absolute -z-[10]'}>
-            <div className="relative w-[586px] h-[340px] bg-[#fff] rounded-[5px]">
+          <div className={isCreateSign ? '' : 'invisible absolute -z-[10]'}>
+            <div ref={drawingBoardRef} className="relative w-[586px] h-[340px] bg-[#fff] rounded-[5px] overflow-hidden">
                 <canvas
                 className="bg-[#fff]"
                 ref={canvasRef}
