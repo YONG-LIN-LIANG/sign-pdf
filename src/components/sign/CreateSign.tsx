@@ -8,8 +8,11 @@ import ColorPickerIcon from "@/components/svg/ColorPicker"
 import ActiveColorPickerIcon from "@/components/svg/ActiveColorPicker"
 import getTouchPos from "../../utils/getTouchPos"
 import getMousePos from "../../utils/getMousePos"
+import { useAtom } from "jotai"
+import { displayMessageBox } from '@/store/index'
 import React, { useState, useRef, useEffect } from "react"
 const CreateSign = () => {
+  const [, setMessageBox] = useAtom(displayMessageBox)
   const [isCreateSign, setIsCreateSign] = useState<boolean>(true)
   const [drawingBoard, setDrawingBoard] = useState<{width: number, height: number}>({
     width: 0,
@@ -169,8 +172,9 @@ const CreateSign = () => {
     if(recordDrawPath.length > 1 && recordIndex < recordDrawPath.length - 1) {
       setRecordIndex(recordIndex + 1)
     }
-    
-    // ctx?.putImageData(recordDrawPath[recordIndex], 0, 0)
+  }
+  const handleSaveSign = () => {
+    setMessageBox({isDisplay: true, isMask: false, content: '建立成功！', style: 'bg-[#E3FEC7CC] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
   }
   return (
     <section className="w-[820px]">
@@ -245,9 +249,8 @@ const CreateSign = () => {
                     ))}
                   </div>
                 }
-                
             </div>
-            <button className="flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
+            <button onClick={handleSaveSign} className="flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
           </div>
         
           <div className={isCreateSign ? 'hidden' : ''}>
