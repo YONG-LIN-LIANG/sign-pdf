@@ -11,7 +11,7 @@ import getMousePos from "../../utils/getMousePos"
 import React, { useState, useRef, useEffect } from "react"
 const CreateSign = () => {
   const [isCreateSign, setIsCreateSign] = useState<boolean>(true)
-  const [drawingBoard, setDrawingBoard] = useState<{width: number | undefined, height: number | undefined}>({
+  const [drawingBoard, setDrawingBoard] = useState<{width: number, height: number}>({
     width: 0,
     height: 0
   })
@@ -39,7 +39,8 @@ const CreateSign = () => {
   const [drawing, setDrawing] = useState<boolean>(false)
   const drawingBoardRef = useRef<HTMLDivElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  // const [restoreArray
+  const [recordDrawPath, setRecordDrawPath] = useState<any[]>([])
+  const [recordIndex, setRecordIndex] = useState<number>(0)
   const [signList, setSignList] = useState([
     {
       name: '正楷正楷正楷正楷正楷正楷正楷正楷2020',
@@ -68,7 +69,7 @@ const CreateSign = () => {
   ])
 
   useEffect(() => {
-    if(drawingBoardRef !== null && canvasRef !== null) {
+    if(drawingBoardRef.current !== null && canvasRef !== null) {
       setDrawingBoard({
         ...drawingBoard,
         width: drawingBoardRef.current?.offsetWidth,
@@ -79,6 +80,16 @@ const CreateSign = () => {
       if(c) setCtx(c.getContext("2d"))
     }
   }, [drawingBoardRef, canvasRef])
+  useEffect(() => {
+    if(ctx) {
+      const newDraw = ctx?.getImageData(0, 0, drawingBoard?.width, drawingBoard?.height)
+      setRecordDrawPath((oldRecordArr: any[]) => [...oldRecordArr, newDraw])
+      setRecordIndex(0)
+    }
+  }, [ctx])
+  useEffect(() => {
+    ctx?.putImageData(recordDrawPath[recordIndex], 0, 0)
+  }, [recordIndex])
   const [signName, setSignName] = useState('')
   const tabStyle = "relative z-[5] flex items-center px-[20px] py-[8px] rounded-full cursor-pointer"
 
@@ -130,10 +141,36 @@ const CreateSign = () => {
   }
   const handleMouseUp = () => {
     setDrawing(false)
+    const width = drawingBoard?.width
+    const newDraw = ctx?.getImageData(0, 0, width, drawingBoard?.height)
+    if(recordIndex === recordDrawPath.length - 1) {
+      setRecordDrawPath((oldRecordArr: any[]) => [...oldRecordArr, newDraw])
+    } else {
+      // 如果在index 1畫的化，會把recordDrawPath 2,3的資料清掉再填入新畫的進陣列，index再+1
+      let newArr = recordDrawPath.filter((element, index) => index < recordIndex + 1)
+      newArr.push(newDraw)
+      setRecordDrawPath(newArr)
+    }
+    setRecordIndex(recordIndex + 1)
   }
 
   const handleClear = () => {
     if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height)
+    setRecordDrawPath([recordDrawPath[0]])
+    setRecordIndex(0)
+  }
+  const handleGoLastStep = () => {
+    // 如果recordPath只有一筆就不能觸發
+    if(recordIndex === 0) return
+    setRecordIndex(recordIndex - 1)
+    // ctx?.putImageData(recordDrawPath[recordIndex], 0, 0)
+  }
+  const handleGoNextStep = () => {
+    if(recordDrawPath.length > 1 && recordIndex < recordDrawPath.length - 1) {
+      setRecordIndex(recordIndex + 1)
+    }
+    
+    // ctx?.putImageData(recordDrawPath[recordIndex], 0, 0)
   }
   return (
     <section className="w-[820px]">
@@ -184,7 +221,7 @@ const CreateSign = () => {
                 height={drawingBoard.height}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
+                onTouchEnd={handleMouseUp}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
@@ -192,8 +229,8 @@ const CreateSign = () => {
                 </canvas>
                 {
                   !drawing && <div className="flex absolute top-[14px] right-[14px]">
-                  <button className={`flex-center w-[32px] h-[32px] rounded-[5px]`}><LastIcon /></button>
-                  <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px]`}><NextIcon /></button>
+                  <button onClick={handleGoLastStep} className={`flex-center w-[32px] h-[32px] rounded-[5px] ${recordIndex === 0 ? 'text-[#BDBDBD] bg-[#F2F2F2]' : 'text-[#787CDA] bg-[#E9E1FF]'}`}><LastIcon /></button>
+                  <button onClick={handleGoNextStep} className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] ${!(recordDrawPath.length > 1 && recordIndex < recordDrawPath.length - 1) ? 'text-[#BDBDBD] bg-[#F2F2F2]' : 'text-[#787CDA] bg-[#E9E1FF]'}`}><NextIcon /></button>
                   <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`} onClick={() => handleClear()}>清除</button>
                 </div>
                 }
