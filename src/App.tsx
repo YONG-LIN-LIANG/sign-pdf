@@ -1,8 +1,10 @@
 import SignFile from "./components/sign"
+import { Provider as JotaiProvider } from "jotai"
+import Dialog from "@/components/layout/Dialog"
 import {
   Route,
   Routes,
-  Navigate,
+  // Navigate,
   // useLocation
 } from "react-router-dom"
 import Login from "./pages/Login"
@@ -18,18 +20,17 @@ function App() {
     //   <h3>繪製簽名檔</h3>
     //   <SignFile></SignFile>
     // </div>
-    <Layout>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/overview" element={<Overview />} />
-        <Route path="/sign" element={<Sign />} />
-        <Route path="/history" element={<History />} />
-        <Route
-          path="/"
-          element={<Navigate replace to="/login" />}
-        />
-      </Routes>
-    </Layout>
+    <JotaiProvider>
+      <Layout>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/overview" element={<Overview />} />
+          <Route path="/sign" element={<Sign />} />
+          <Route path="/history" element={<History />} />
+        </Routes>
+        <Dialog />
+      </Layout>
+    </JotaiProvider>
   )
 }
 
