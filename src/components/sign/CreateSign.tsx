@@ -9,10 +9,11 @@ import ActiveColorPickerIcon from "@/components/svg/ActiveColorPicker"
 import getTouchPos from "../../utils/getTouchPos"
 import getMousePos from "../../utils/getMousePos"
 import { useAtom } from "jotai"
-import { displayMessageBox } from '@/store/index'
+import { displayMessageBox, addSign } from '@/store/index'
 import React, { useState, useRef, useEffect } from "react"
 const CreateSign = () => {
   const [, setMessageBox] = useAtom(displayMessageBox)
+  const [, setAddSign] = useAtom(addSign)
   const [isCreateSign, setIsCreateSign] = useState<boolean>(true)
   const [drawingBoard, setDrawingBoard] = useState<{width: number, height: number}>({
     width: 0,
@@ -20,7 +21,7 @@ const CreateSign = () => {
   })
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
-  const [src, setSrc] = useState(null)
+  const [imgSrc, setImgSrc] = useState<string>('')
   const [colorPicker, setColorPicker] = useState({
     activeStyle: 'text-[#000]',
     activeColor: '#000',
@@ -44,33 +45,6 @@ const CreateSign = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [recordDrawPath, setRecordDrawPath] = useState<any[]>([])
   const [recordIndex, setRecordIndex] = useState<number>(0)
-  const [signList, setSignList] = useState([
-    {
-      name: '正楷正楷正楷正楷正楷正楷正楷正楷2020',
-      image: '/src/assets/image/mockSign1.png'
-    },
-    {
-      name: '正楷正楷正楷正楷正楷正楷正楷正楷2019',
-      image: '/src/assets/image/mockSign1.png'
-    },
-    {
-      name: '正楷正楷正楷正楷正楷正楷正楷正楷2020',
-      image: '/src/assets/image/mockSign1.png'
-    },
-    {
-      name: '正楷正楷正楷正楷正楷正楷正楷正楷2019',
-      image: '/src/assets/image/mockSign1.png'
-    },
-    {
-      name: '正楷正楷正楷正楷正楷正楷正楷正楷2020',
-      image: '/src/assets/image/mockSign1.png'
-    },
-    {
-      name: '正楷正楷正楷正楷正楷正楷正楷正楷2019',
-      image: '/src/assets/image/mockSign1.png'
-    },
-  ])
-
   useEffect(() => {
     if(drawingBoardRef.current !== null && canvasRef !== null) {
       setDrawingBoard({
@@ -92,6 +66,7 @@ const CreateSign = () => {
   }, [ctx])
   useEffect(() => {
     ctx?.putImageData(recordDrawPath[recordIndex], 0, 0)
+    console.log(recordDrawPath.length === 1 && !signName)
   }, [recordIndex])
   const [signName, setSignName] = useState('')
   const tabStyle = "relative z-[5] flex items-center px-[20px] py-[8px] rounded-full cursor-pointer"
@@ -174,7 +149,19 @@ const CreateSign = () => {
     }
   }
   const handleSaveSign = () => {
-    setMessageBox({isDisplay: true, isMask: false, content: '建立成功！', style: 'bg-[#E3FEC7CC] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
+    if(!(recordDrawPath.length > 1 && signName)) return
+    const imageURL = canvas?.toDataURL()
+    if(imageURL) {
+      setImgSrc(imageURL)
+      // 呼叫jotai方法存到簽名檔清單，並存在localStorage
+      const newSignElement = {id: Date.now(), title: signName, image: imageURL}
+      setAddSign(newSignElement)
+      handleClear()
+      setSignName('')
+      // 存到localStorage
+      setMessageBox({isDisplay: true, isMask: false, content: '建立成功！', style: 'bg-[#E3FEC7CC] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
+    }
+    
   }
   return (
     <section className="w-[820px]">
@@ -203,7 +190,7 @@ const CreateSign = () => {
 
       <div className="flex mt-[40px]">
         {/* 我的簽名檔(左側) */}
-        <MySign signList={signList} />
+        <MySign />
         {/* 右側 */}
         <div className="flex-grow ml-[40px]">
           <div>
@@ -250,7 +237,7 @@ const CreateSign = () => {
                   </div>
                 }
             </div>
-            <button onClick={handleSaveSign} className="flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
+            <button onClick={handleSaveSign} className={`flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] rounded-[5px] ${recordDrawPath.length > 1 && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>建立簽名檔</button>
           </div>
         
           <div className={isCreateSign ? 'hidden' : ''}>

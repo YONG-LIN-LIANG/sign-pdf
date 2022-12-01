@@ -6,9 +6,15 @@ import CreateSign from "@/components/sign/CreateSign"
 import UploadDocument from "@/components/sign/UploadDocument"
 import StartSign from "@/components/sign/StartSign"
 import DownloadResult from "@/components/sign/DownloadResult"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useAtom } from "jotai"
+import { setSignList } from '@/store/index'
 const Sign = () => {
   const [currentStep, setCurrentStep] = useState(1)
+  const [, displaySignList] = useAtom(setSignList)
+  useEffect(() => {
+    displaySignList()
+  },[])
   const handleSwitchStep = (step: number) => {
     setCurrentStep(step)
   }
