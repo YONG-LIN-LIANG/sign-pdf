@@ -84,9 +84,9 @@ body {
 }
 
 .messageBox--open {
-  @apply translate-x-[-50%] translate-y-[100px]
+  @apply opacity-90;
 }
 
 .messageBox--close {
-  @apply translate-x-[-50%] translate-y-[-24rem]
+  @apply opacity-0 pointer-events-none;
 }

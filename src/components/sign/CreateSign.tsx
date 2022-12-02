@@ -45,6 +45,16 @@ const CreateSign = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [recordDrawPath, setRecordDrawPath] = useState<any[]>([])
   const [recordIndex, setRecordIndex] = useState<number>(0)
+  const [isClearUploadFile, setIsClearUploadFile] = useState<boolean>(false)
+  const [formError, setFormError] = useState({
+    signName: false,
+    drawingBoard: false,
+    uploadArea: false
+  })
+  const [isButtonClick, setIsButtonClick] = useState({
+    drawingArea: false,
+    uploadArea: false
+  })
   useEffect(() => {
     if(drawingBoardRef.current !== null && canvasRef !== null) {
       setDrawingBoard({
@@ -149,19 +159,51 @@ const CreateSign = () => {
     }
   }
   const handleSaveSign = () => {
-    if(!(recordDrawPath.length > 1 && signName)) return
-    const imageURL = canvas?.toDataURL()
-    if(imageURL) {
-      setImgSrc(imageURL)
-      // 呼叫jotai方法存到簽名檔清單，並存在localStorage
-      const newSignElement = {id: Date.now(), title: signName, image: imageURL}
-      setAddSign(newSignElement)
-      handleClear()
-      setSignName('')
-      // 存到localStorage
-      setMessageBox({isDisplay: true, isMask: false, content: '建立成功！', style: 'bg-[#E3FEC7CC] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
+    setFormError((prevState) => ({...prevState, signName: Boolean(signName), drawingBoard: recordDrawPath.length > 1}))
+    setIsButtonClick((prevState) => ({...prevState, drawingArea: true}))
+    const timer = setTimeout(() => {
+      console.log('run timer')
+      setIsButtonClick((prevState) => ({...prevState, drawingArea: false}))
+      clearTimeout(timer)
+    }, 3000)
+    if(!(recordDrawPath.length > 1 && signName)) {
+      setMessageBox({isDisplay: true, isMask: false, dialogName: 'alert', content: '請完成必填欄位！', basicStyle: 'text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'})
+    } else {
+      const imageURL = canvas?.toDataURL()
+      if(imageURL) {
+        // 呼叫jotai方法存到簽名檔清單，並存在localStorage
+        const newSignElement = {id: Date.now(), title: signName, image: imageURL}
+        setAddSign(newSignElement)
+        handleClear()
+        setSignName('')
+        // 存到localStorage
+        setMessageBox({isDisplay: true, isMask: false, dialogName: 'success', content: '建立成功！', basicStyle: 'bg-[#E3FEC7] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
+      }
     }
     
+  }
+  const handleUploadSign = (img: string) => {
+    setIsClearUploadFile(false)
+    setImgSrc(img)
+  }
+  const handleUploadSaveSign = () => {
+    setFormError((prevState) => ({...prevState, signName: Boolean(signName), uploadArea: Boolean(imgSrc)}))
+    setIsButtonClick((prevState) => ({...prevState, uploadArea: true}))
+    const timer = setTimeout(() => {
+      console.log('run timer')
+      setIsButtonClick((prevState) => ({...prevState, uploadArea: false}))
+      clearTimeout(timer)
+    }, 3000)
+    if(!(signName && imgSrc)) {
+      setMessageBox({isDisplay: true, isMask: false, dialogName: 'alert', content: '請完成必填欄位！', basicStyle: 'text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'})
+    } else {
+      const newSignElement = {id: Date.now(), title: signName, image: imgSrc}
+      setAddSign(newSignElement)
+      setSignName('')
+      setIsClearUploadFile(true)
+      setImgSrc('')
+      setMessageBox({isDisplay: true, isMask: false, dialogName: 'success', content: '建立成功！', basicStyle: 'bg-[#E3FEC7] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
+    }
   }
   return (
     <section className="w-[820px]">
@@ -196,7 +238,16 @@ const CreateSign = () => {
           <div>
             <h4 className="text-[#4F4F4F]">簽名檔名稱<span className="ml-[4px] text-[#FF7070]">*</span></h4>
             <div className="relative w-[360px] h-[40px] mt-[20px]">
-              <input type="text" className="signInput w-full h-full pr-[70px] rounded-[5px]" placeholder="輸入簽名檔名稱" value={signName} name="firstName" maxLength={18} onChange={(e) => setSignName(e.target.value)}  />
+              <input 
+                type="text" 
+                className={`
+                  signInput w-full h-full pr-[70px] rounded-[5px] 
+                  ${(isCreateSign && !formError.signName && isButtonClick.drawingArea) || 
+                  (!isCreateSign && !formError.signName && isButtonClick.uploadArea) 
+                  ? 'border border-[#f00]' 
+                  : ''
+                  }`
+                } placeholder="輸入簽名檔名稱" value={signName} name="firstName" maxLength={18} onChange={(e) => setSignName(e.target.value)}  />
               <span className="absolute right-0 top-0 bottom-0 my-auto pr-[10px] text-[#BDBDBD] leading-[40px]">{signName.length}／18</span>
             </div>
           </div>
@@ -204,7 +255,7 @@ const CreateSign = () => {
           <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">簽名圖樣<span className="ml-[4px] text-[#FF7070]">*</span></h4>
           {/* 手寫簽名 */}
           <div className={isCreateSign ? '' : 'invisible absolute -z-[10]'}>
-            <div ref={drawingBoardRef} className="relative w-[586px] h-[340px] bg-[#fff] rounded-[5px] overflow-hidden">
+            <div ref={drawingBoardRef} className={`relative w-[586px] h-[340px] bg-[#fff] rounded-[5px] overflow-hidden ${!formError.drawingBoard && isButtonClick.drawingArea ? 'border border-[#f00]' : ''}`}>
                 <canvas
                 className="bg-[#fff]"
                 ref={canvasRef}
@@ -241,10 +292,9 @@ const CreateSign = () => {
           </div>
         
           <div className={isCreateSign ? 'hidden' : ''}>
-            <UploadArea />
-            <button className="flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px]">建立簽名檔</button>
+            <UploadArea onUploadSign={handleUploadSign} isClearUploadFile={isClearUploadFile} formError={formError} isButtonClick={isButtonClick.uploadArea} />
+            <button onClick={handleUploadSaveSign} className={`flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px] ${imgSrc && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>建立簽名檔</button>
           </div>
-            
         </div>
       </div>
     </section>

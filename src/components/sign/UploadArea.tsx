@@ -1,13 +1,36 @@
 import TrashcanIcon from "@/components/svg/Trashcan"
 import UploadIcon from "@/components/svg/Upload"
-import { useRef, useState } from "react"
-const UploadArea = () => {
+import { useRef, useState, useEffect } from "react"
+interface FormError {
+  signName?: boolean;
+  drawingBoard?: boolean;
+  uploadArea?: boolean;
+}
+interface Props {
+  onUploadSign: Function, 
+  isClearUploadFile: boolean, 
+  formError: FormError, 
+  isButtonClick: boolean
+}
+
+const UploadArea = ({ onUploadSign, isClearUploadFile, formError, isButtonClick }: Props) => {
   const fileDivRef = useRef<HTMLDivElement | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const thumbnailRef = useRef<HTMLImageElement | null>(null)
   const [draggingFile, setDraggingFile] = useState<boolean>(false)
   const [uploadFile, setUploadFile] = useState(null)
-  const [filePreviewUrl, setFilePreviewUrl] = useState<string | ArrayBuffer>('')
+  useEffect(() => {
+    console.log('fff', formError)
+  }, [formError])
+  useEffect(() => {
+    console.log('iii', isClearUploadFile)
+    if(isClearUploadFile) {
+      setUploadFile(null)
+      if(thumbnailRef.current) {
+        thumbnailRef.current.src = ""
+      }
+    }
+  }, [isClearUploadFile])
   const onDragEnter = () => {
     if(fileDivRef !== null) {
       setDraggingFile(true)
@@ -65,26 +88,21 @@ const UploadArea = () => {
     console.log('deal file image')
     const fileReader = new FileReader()
     fileReader.onloadend = () => {
-      if(fileReader.result) {
-        setFilePreviewUrl(fileReader.result)
-        if(thumbnailRef.current) thumbnailRef.current.src = fileReader.result.toString()
+      if(fileReader.result && thumbnailRef.current) {
+        thumbnailRef.current.src = fileReader.result.toString()
+        onUploadSign(fileReader.result.toString())
       }
     }
     console.log('hhh', file)
     if (file) {
       fileReader.readAsDataURL(file)
     }
-    
-    if(thumbnailRef !== null) {
-      console.log(thumbnailRef, fileReader.result)
-      // thumbnailRef.current.src = fileReader.result
-    }
   }
   return (
     <>
       <div 
         ref={fileDivRef} 
-        className="flex flex-col justify-center items-center w-full h-[245px] border border-[#fff] bg-[#FFFFFF80] rounded-[5px] select-none"
+        className={`flex flex-col justify-center items-center w-full h-[245px] border bg-[#FFFFFF80] rounded-[5px] select-none ${!formError.uploadArea && isButtonClick ? 'border-[#f00]' : 'border-[#fff]'}`}
         onDragEnter={onDragEnter}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}

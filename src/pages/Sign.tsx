@@ -10,7 +10,7 @@ import { useState, useEffect } from "react"
 import { useAtom } from "jotai"
 import { setSignList } from '@/store/index'
 const Sign = () => {
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(2)
   const [, displaySignList] = useAtom(setSignList)
   useEffect(() => {
     displaySignList()

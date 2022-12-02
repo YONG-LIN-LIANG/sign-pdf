@@ -5,8 +5,10 @@ import { atom } from "jotai"
 interface MessageBox {
   isDisplay: boolean,
   isMask: boolean,
+  dialogName: string,
   content: string,
-  style?: string
+  basicStyle?: string,
+  logoStyle?: string
 }
 interface Dialog {
   isDisplay: boolean,
@@ -25,7 +27,7 @@ export interface Sign {
 // dialog: 燈箱名稱，props 
 
 // Jotai implementation
-export const messageBox = atom<MessageBox>({isDisplay: false, isMask: false, content: ""})
+export const messageBox = atom<MessageBox>({isDisplay: false, isMask: false, dialogName: '', content: ""})
 export const dialogAtom = atom<Dialog>({isDisplay: false, dialogName: '', props: {}})
 export const signListAtom = atom<Sign[]>([])
 
@@ -34,7 +36,7 @@ export const displayMessageBox = atom(
   (get, set, props: MessageBox) => {
     set(messageBox, props)
     setTimeout(() => {
-      set(messageBox, {isDisplay: false, isMask: false, content: ''})
+      set(messageBox, {isDisplay: false, isMask: false, dialogName: '', content: ''})
     }, 3000)
   }
 )
