@@ -19,7 +19,10 @@ const MySign = () => {
             ? signList.map((sign: Sign) => (
               <li key={sign.id} className="relative signCard w-[160px] p-[8px] bg-[#FFFFFF80]">
                 <h5 className="mb-[8px] text-[14px]">{ sign.title }</h5>
-                <img src={ sign.image } alt="" className="bg-[#fff]" />
+                <div className="h-[70px]">
+                  <img src={ sign.image } alt="" className="object-contain w-full h-full bg-[#fff]" />
+                </div>
+                
                 <button onClick={() => handleOpenDialog(sign.id)} className="animation opacity-0 absolute right-0 bottom-0 flex-center w-[32px] h-[32px] bg-[#FF7070] rounded-[5px]"><SignTrashcanIcon /></button>
               </li>
             ))
