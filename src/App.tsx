@@ -1,9 +1,9 @@
-import SignFile from "./components/sign"
 import { Provider as JotaiProvider } from "jotai"
 import Dialog from "@/components/layout/Dialog"
 import {
   Route,
   Routes,
+  Navigate
   // Navigate,
   // useLocation
 } from "react-router-dom"
@@ -23,6 +23,7 @@ function App() {
     <JotaiProvider>
       <Layout>
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/overview" element={<Overview />} />
           <Route path="/sign" element={<Sign />} />

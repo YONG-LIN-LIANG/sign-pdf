@@ -31,7 +31,7 @@ const StartSign = () => {
 
   return (
     <section className="flex text-[14px]">
-      <MySign signList={signList} />
+      <MySign />
       <div className="flex-grow ml-[40px]">
         <h4 className="text-[#4F4F4F]">簽署文件</h4>
         <span className="text-[#828282]">將左方簽名檔拖移置簽署文件中並調整位置與大小</span>
