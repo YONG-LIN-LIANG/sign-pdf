@@ -206,7 +206,7 @@ const CreateSign = () => {
     }
   }
   return (
-    <section className="max-w-[546px] lg:w-[820px] lg:max-w-[1000px]">
+    <section className="w-[80%] max-w-[546px] lg:w-[820px] lg:max-w-[1000px] mx-auto">
       <ul className="relative flex w-max mx-auto bg-[#FFFFFF80] rounded-full px-[10px] py-[8.5px]">
         <li 
           className={
@@ -237,7 +237,7 @@ const CreateSign = () => {
         <div className="flex-grow mt-[40px] lg:mt-0 lg:ml-[40px]">
           <div>
             <h4 className="text-[#4F4F4F]">簽名檔名稱<span className="ml-[4px] text-[#FF7070]">*</span></h4>
-            <div className="relative w-[360px] h-[40px] mt-[20px]">
+            <div className="relative max-w-[360px] h-[40px] mt-[20px]">
               <input 
                 type="text" 
                 className={`

@@ -47,10 +47,23 @@ const Sign = () => {
     },
   ]
   return (
-    <section className="mx-auto">
-      <div className="flex justify-center w-full">
-        <div className="hidden md:block max-w-[546px] w-full mb-[68px]">
-          <div className="flex items-end">
+    <section className="w-full mx-auto">
+      <div className="w-[300px] xs:w-[400px] mmd:w-[620px] mx-auto overflow-hidden">
+        <div className={`
+          relative flex justify-center mt-[50px] mx-auto w-[543px] animation 
+          ${currentStep === 1 
+            ? 'left-[40%] xs:left-[41%] mmd:left-[39%]' 
+            : currentStep === 2 
+            ? 'left-[-12%] xs:left-[2%] mmd:left-[13%]' 
+            : currentStep === 3 
+            ? 'left-[-68%] xs:left-[-38%] mmd:left-[-13%]'    
+            : currentStep === 4
+            ? 'left-[-120%] xs:left-[-77%] mmd:left-[-40%]'
+            : ''
+          }
+          md:left-0
+        `}>
+          <div className="w-full mb-[68px]">
             {/* 背景 */}
             <div className="absolute text-[#F2F2F2] z-[5]">
               <ProgressBarIcon />
@@ -61,21 +74,21 @@ const Sign = () => {
                 <path ref={progressBarRef} d="M539.817 58.801C523.388 49.5565 509.817 37.917 508.483 22.1103C507.15 6.3036 511.817 3.33386 514.245 3.33386C516.674 3.33386 521.483 7.74058 521.579 21.0086C521.674 34.2767 517.579 47.9279 490.341 55.1606C463.102 62.3934 395.96 58.8489 379.674 55.7833C360.722 52.1909 343.864 40.6472 344.626 20.6254C345.531 -2.12663 359.531 3.62126 359.436 20.6254C359.388 29.7741 356.007 40.9825 338.198 50.227C319.055 60.1421 271.341 59.6632 271.341 59.6632C271.341 59.6632 223.817 60.1421 204.722 50.227C186.96 40.9825 183.579 29.822 183.579 20.6254C183.483 3.62126 197.483 -2.12663 198.341 20.6254C199.102 40.6472 182.293 52.1909 163.436 55.7833C147.198 58.8489 80.293 62.3934 53.1501 55.1606C26.0073 47.9279 21.912 34.3246 22.0072 21.0086C22.1025 7.69268 26.8644 3.33386 29.293 3.33386C31.7215 3.33386 36.3882 6.3036 35.0549 22.1103C33.7215 37.917 20.2453 49.5565 3.81677 58.801" stroke="#787CDA" stroke-width="6" stroke-miterlimit="10" stroke-linecap="round"/>
               </svg>
             </div>
-          </div>
-          <div className="flex justify-between">
-            {
-              stepList.map((step, index) => (
-                <div key={index} className={`${step.style} relative flex flex-col items-center ${currentStep === step.id ? 'text-[#333333]' : currentStep > step.id ? 'text-[#787CDA]' : 'text-[#BDBDBD]'}`}>
-                  <span className="text-[12px]">step{step.id}</span>
-                  <div className="relative">
-                    <h3 className="relative z-[3] text-[18px] font-medium">{step.name}</h3>
-                    {
-                      currentStep === step.id && <div className="absolute left-[10px] right-[10px] top-0 bottom-0 m-auto h-[8px] bg-[#E3FEC7]"></div>
-                    }
+            <div className="flex justify-between">
+              {
+                stepList.map((step, index) => (
+                  <div key={index} className={`${step.style} relative flex flex-col items-center ${currentStep === step.id ? 'text-[#333333]' : currentStep > step.id ? 'text-[#787CDA]' : 'text-[#BDBDBD]'}`}>
+                    <span className="text-[12px]">step{step.id}</span>
+                    <div className="relative">
+                      <h3 className="relative z-[3] text-[18px] font-medium">{step.name}</h3>
+                      {
+                        currentStep === step.id && <div className="absolute left-[10px] right-[10px] top-0 bottom-0 m-auto h-[8px] bg-[#E3FEC7]"></div>
+                      }
+                    </div>
                   </div>
-                </div>
-              ))
-            }
+                ))
+              }
+            </div>
           </div>
         </div>
       </div>
