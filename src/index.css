@@ -51,7 +51,7 @@ body {
 }
 
 .signCard + .signCard {
-  @apply mt-[14px];
+  @apply ml-[14px] mt-0 lg:mt-[14px] lg:ml-0;
 }
 
 .signCard:hover button {
