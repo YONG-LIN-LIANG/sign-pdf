@@ -10,7 +10,7 @@ const UploadDocument = () => {
 
   }
   return  (
-    <section>
+    <section className="w-[80%] max-w-[546px] lg:w-[820px] lg:max-w-[1000px] mx-auto">
       <h4 className="text-[#4F4F4F]">上傳簽署文件<span className="ml-[4px] text-[#FF7070]">*</span></h4>
       <div className="mt-[20px]">
         <UploadArea onUploadSign={handleUploadSign} isClearUploadFile={isClearUploadFile} formError={formError} isButtonClick={isButtonClick.uploadArea} />

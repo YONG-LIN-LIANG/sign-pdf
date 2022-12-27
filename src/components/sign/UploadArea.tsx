@@ -53,7 +53,7 @@ const UploadArea = ({ onUploadSign, isClearUploadFile, formError, isButtonClick 
   const onDrop = (e: any) => {
     e.preventDefault()
     e.stopPropagation()
-    const allowExtension = ['png', 'jpg']
+    const allowExtension = ['png', 'jpg', 'pdf']
     console.log('drop', e.dataTransfer.files)
     const extensionArr = e.dataTransfer.files[0].name.split(".")
     const extension = extensionArr[extensionArr.length - 1]
@@ -61,7 +61,7 @@ const UploadArea = ({ onUploadSign, isClearUploadFile, formError, isButtonClick 
     if(!allowExtension.includes(extension)) {
       setDraggingFile(false)
       fileDivRef.current?.classList.remove('dragover')
-      alert("只允許使用png, jpg圖檔")
+      alert("只允許使用png, jpg, pdf圖檔")
       return
     }
     if(fileInputRef.current !== null) {
@@ -91,6 +91,7 @@ const UploadArea = ({ onUploadSign, isClearUploadFile, formError, isButtonClick 
       if(fileReader.result && thumbnailRef.current) {
         thumbnailRef.current.src = fileReader.result.toString()
         onUploadSign(fileReader.result.toString())
+        console.log('urll', fileReader.result.toString())
       }
     }
     console.log('hhh', file)
@@ -118,7 +119,7 @@ const UploadArea = ({ onUploadSign, isClearUploadFile, formError, isButtonClick 
           <span>檔案格式png／jpg</span>
           <span>檔案大小＜1MB</span>
         </div>
-        <input ref={fileInputRef} type="file" accept=".png, .jpg" className="absolute -z-[10]" onChange={onFileDrop} />
+        <input ref={fileInputRef} type="file" accept=".png, .jpg, application/pdf" className="absolute -z-[10]" onChange={onFileDrop} />
       </div>
 
       <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">預覽簽名檔</h4>
