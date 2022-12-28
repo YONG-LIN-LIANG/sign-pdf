@@ -47,16 +47,16 @@ const Sign = () => {
     },
   ]
   return (
-    <section className="w-full mx-auto">
-      <div className="w-[300px] xs:w-[400px] mmd:w-[620px] mx-auto overflow-hidden">
+    <section className="w-full mx-auto overflow-x-hidden">
+      <div className="w-[300px] xs:w-[400px] mmd:w-[620px] mx-auto">
         <div className={`
           relative flex justify-center mt-[50px] mx-auto w-[543px] animation 
           ${currentStep === 1 
             ? 'left-[40%] xs:left-[41%] mmd:left-[39%]' 
             : currentStep === 2 
-            ? 'left-[-12%] xs:left-[2%] mmd:left-[13%]' 
+            ? 'left-[-13%] xs:left-[2%] mmd:left-[13%]' 
             : currentStep === 3 
-            ? 'left-[-68%] xs:left-[-38%] mmd:left-[-13%]'    
+            ? 'left-[-66%] xs:left-[-38%] mmd:left-[-13%]'    
             : currentStep === 4
             ? 'left-[-120%] xs:left-[-77%] mmd:left-[-40%]'
             : ''
