@@ -206,7 +206,7 @@ const CreateSign = () => {
     }
   }
   return (
-    <section className="w-[80%] max-w-[546px] lg:w-[820px] lg:max-w-[1000px] mx-auto">
+    <section className="max-w-[546px] lg:w-[820px] lg:max-w-[1000px] mx-auto">
       <ul className="relative flex w-max mx-auto bg-[#FFFFFF80] rounded-full px-[10px] py-[8.5px]">
         <li 
           className={
@@ -230,7 +230,7 @@ const CreateSign = () => {
         <div className={`animation absolute select-none ${isCreateSign ? 'left-[10px] z-[2] w-[132px]' : 'left-[142px] z-[2] w-[144px]'} top-[8.5px] h-[40px] bg-[#595ED3] rounded-full`}></div>
       </ul>
 
-      <div className="flex flex-col lg:flex-row mx-auto mt-[40px] w-auto max-w-[586px] lg:max-w-[1000px]">
+      <div className="flex flex-col lg:flex-row mx-auto mt-[40px] w-[80%] max-w-[586px] lg:max-w-[1000px]">
         {/* 我的簽名檔(左側) */}
         <MySign />
         {/* 右側 */}
@@ -292,7 +292,7 @@ const CreateSign = () => {
           </div>
         
           <div className={isCreateSign ? 'hidden' : ''}>
-            <UploadArea onUploadSign={handleUploadSign} isClearUploadFile={isClearUploadFile} formError={formError} isButtonClick={isButtonClick.uploadArea} />
+            <UploadArea uploadType="png／jpg" onUploadSign={handleUploadSign} isClearUploadFile={isClearUploadFile} formError={formError} isButtonClick={isButtonClick.uploadArea} />
             <button onClick={handleUploadSaveSign} className={`flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px] ${imgSrc && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>建立簽名檔</button>
           </div>
         </div>

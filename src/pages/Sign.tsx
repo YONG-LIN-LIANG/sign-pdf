@@ -47,16 +47,16 @@ const Sign = () => {
     },
   ]
   return (
-    <section className="w-full mx-auto">
-      <div className="w-[300px] xs:w-[400px] mmd:w-[620px] mx-auto overflow-hidden">
+    <section className="w-full mx-auto overflow-x-hidden">
+      <div className="w-[300px] xs:w-[400px] mmd:w-[620px] mx-auto">
         <div className={`
           relative flex justify-center mt-[50px] mx-auto w-[543px] animation 
           ${currentStep === 1 
             ? 'left-[40%] xs:left-[41%] mmd:left-[39%]' 
             : currentStep === 2 
-            ? 'left-[-12%] xs:left-[2%] mmd:left-[13%]' 
+            ? 'left-[-13%] xs:left-[2%] mmd:left-[13%]' 
             : currentStep === 3 
-            ? 'left-[-68%] xs:left-[-38%] mmd:left-[-13%]'    
+            ? 'left-[-66%] xs:left-[-38%] mmd:left-[-13%]'    
             : currentStep === 4
             ? 'left-[-120%] xs:left-[-77%] mmd:left-[-40%]'
             : ''
@@ -105,7 +105,7 @@ const Sign = () => {
       }
 
       {/* step也用全局狀態管理 */}
-      <div className="flex justify-center mt-[60px]">
+      <div className="flex flex-col sm:flex-row justify-center items-center mt-[60px]">
         {
           currentStep !== 1 && <button className="flex-center w-[180px] h-[40px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(currentStep - 1)}>上一步</button>
         }
@@ -114,15 +114,15 @@ const Sign = () => {
         }
         {
           currentStep === 2
-          ? <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(3)}>前往簽名</button>
+          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(3)}>前往簽名</button>
           : currentStep === 3
-          ? <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(4)}>前往下載</button>
+          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(4)}>前往下載</button>
           : currentStep === 4
-          ? <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full">下載pdf</button>
+          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full">下載pdf</button>
           : null
         }
         {
-          currentStep === 4 && <button className="flex-center w-[180px] h-[40px] ml-[20px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full">再簽一份</button>
+          currentStep === 4 && <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full">再簽一份</button>
         }
       </div>
     </section>
