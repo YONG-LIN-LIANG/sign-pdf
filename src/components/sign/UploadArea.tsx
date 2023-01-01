@@ -2,6 +2,7 @@ import TrashcanIcon from "@/components/svg/Trashcan"
 import UploadIcon from "@/components/svg/Upload"
 import { useRef, useState, useEffect, createContext } from "react"
 import { pdfjs } from "react-pdf"
+import { PDFDocumentProxy } from 'pdfjs-dist';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 interface FormError {
   signName?: boolean;
@@ -25,6 +26,14 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
   const [uploadFileType, setUploadFileType] = useState('')
+  const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null)
+  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [pdfLoading, setPdfLoading] = useState<boolean>(false)
+  useEffect(() => {
+    console.log('latest pdf', pdf)
+    setPdfLoading(true)
+    handleRenderPdfPage()
+  }, [pdf, currentPage]);
 
   useEffect(() => {
     if(uploadFileType.includes('pdf') || pdfCanvasRef !== null) {
@@ -97,12 +106,41 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     console.log('newfileee', newFile)
     handleFileImage(newFile)
   }
+
+  const handleRenderPdfPage = () => {
+    console.log('pdf instance', pdf)
+    if(pdf) {
+      pdf.getPage(currentPage).then(function (page) {
+        console.log('page loaded')
+        const scale = 0.5
+        const viewport = page.getViewport({ scale: scale})
+        console.log(canvas, ctx, canvas && ctx)
+        // Prepare canvas using PDF dimensions
+        if(canvas && ctx) {
+          console.log('check viewport', viewport)
+          canvas.height = viewport.height
+          canvas.width = viewport.width
+          // Render PDF page into canvas context
+          const renderContext = {
+            canvasContext: ctx,
+            viewport
+          }
+          const renderTask = page.render(renderContext)
+          renderTask.promise.then(function () {
+            console.log('page rendered')
+            setPdfLoading(false)
+          })
+        }
+      })
+    }
+  }
+
   const handleFileImage = (file: any) => {
     console.log('deal file image', file)
     const fileReader = new FileReader()
     file.type.includes("pdf") ? fileReader.readAsArrayBuffer(file) : fileReader.readAsDataURL(file)
     fileReader.onload = function () {
-      console.log('check', this.result, fileReader.result && thumbnailRef.current)
+      console.log('check', this.result, thumbnailRef.current, file.type.includes("image"))
       if(this.result) {
         setUploadFileType(file.type)
         if(file.type.includes("pdf")) {
@@ -114,29 +152,9 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
           console.log('xxx', loadingTask)
           loadingTask.promise.then(
             function (pdf) {
-              console.log("PDF loaded")
-              const pageNumber = 1
-              pdf.getPage(pageNumber).then(function (page) {
-                console.log('page loaded')
-                const scale = 0.5
-                const viewport = page.getViewport({ scale: scale})
-                console.log(canvas, ctx, canvas && ctx)
-                // Prepare canvas using PDF dimensions
-                if(canvas && ctx) {
-                  console.log('check viewport', viewport)
-                  canvas.height = viewport.height
-                  canvas.width = viewport.width
-                  // Render PDF page into canvas context
-                  const renderContext = {
-                    canvasContext: ctx,
-                    viewport
-                  }
-                  const renderTask = page.render(renderContext)
-                  renderTask.promise.then(function () {
-                    console.log('page rendered')
-                  })
-                }
-              })
+              console.log("PDF loaded", pdf)
+              setPdf(pdf)
+              setCurrentPage(1)
             },
             function (reason) {
               // PDF loading error
@@ -151,7 +169,14 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
         }
       }
     }
-    
+  }
+  const handleSwitchPage = (direction: string) => {
+    const totalPage = pdf?._pdfInfo.numPages
+    if(direction === 'next' && currentPage < totalPage) {
+      setCurrentPage((prevState) => prevState + 1)
+    } else if(direction === 'last' && (currentPage > 1 && totalPage !== 1)){
+      setCurrentPage((prevState) => prevState - 1)
+    }
   }
   return (
     <>
@@ -178,20 +203,30 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
 
       <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">{uploadType === 'pdf' ? '預覽文件' : '預覽簽名檔'}</h4>
       <div className="flex-center">
-      <canvas className={uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10]'} ref={pdfCanvasRef} width="500" height="500"></canvas>
-        {
-          uploadFileType.includes('image') 
-          ?<div className="flex-center w-[200px] h-[120px] border">
-            <img ref={thumbnailRef} src="" className="object-contain w-full h-full" />
+        <div  className={uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10]'}>
+          {currentPage ?<div className="mb-[10px] text-center">{currentPage} / {pdf && pdf._pdfInfo.numPages}</div> : ''}
+          <div className="flex items-center">
+            {currentPage ? <button onClick={() => handleSwitchPage('last')}>Left</button> : ''}
+            <div className="flex-center w-full h-full max-w-[500px] min-h-[400px] mx-[20px]">
+              <canvas className={!pdfLoading ? '' : 'invisible absolute -z-[10]'} ref={pdfCanvasRef} width="500" height="500"></canvas>
+              {pdfLoading && <div className="w-full h-full">Loading...</div>}
+            </div>
+            {currentPage ? <button onClick={() => handleSwitchPage('next')}>Right</button> : ''}
           </div>
-          : !uploadFileType
-          ? <div className="flex flex-col items-center text-[#595ED3]">
-          <TrashcanIcon />
-          <span className="mt-[12px]">請上傳檔案</span>
-          </div>
-          : ''
-        }
+        </div>
+
+        <div className={uploadFileType.includes('image') ? 'flex-center w-[200px] h-[120px] border' : 'invisible absolute -z-[10]'}>
+          <img ref={thumbnailRef} src="" className="object-contain w-full h-full" />
+        </div>
         
+        {
+          !uploadFileType && (
+            <div className="flex flex-col items-center text-[#595ED3]">
+            <TrashcanIcon />
+            <span className="mt-[12px]">請上傳檔案</span>
+            </div>
+          )
+        }
       </div>
     </>
   )
