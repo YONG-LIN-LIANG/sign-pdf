@@ -207,9 +207,9 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
           {currentPage ?<div className="mb-[10px] text-center">{currentPage} / {pdf && pdf._pdfInfo.numPages}</div> : ''}
           <div className="flex items-center">
             {currentPage ? <button onClick={() => handleSwitchPage('last')}>Left</button> : ''}
-            <div className="flex-center w-full h-full max-w-[500px] min-h-[400px] mx-[20px]">
+            <div className="flex-center w-full h-full min-w-[300px] min-h-[400px] mx-[20px]">
               <canvas className={!pdfLoading ? '' : 'invisible absolute -z-[10]'} ref={pdfCanvasRef} width="500" height="500"></canvas>
-              {pdfLoading && <div className="w-full h-full">Loading...</div>}
+              {pdfLoading && <div className="w-full h-full text-center">Loading...</div>}
             </div>
             {currentPage ? <button onClick={() => handleSwitchPage('next')}>Right</button> : ''}
           </div>
