@@ -203,7 +203,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
 
       <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">{uploadType === 'pdf' ? '預覽文件' : '預覽簽名檔'}</h4>
       <div className="flex-center">
-        <div  className={uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10]'}>
+        <div  className={uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10] h-0 overflow-hidden'}>
           {currentPage ?<div className="mb-[10px] text-center">{currentPage} / {pdf && pdf._pdfInfo.numPages}</div> : ''}
           <div className="flex items-center">
             {currentPage ? <button onClick={() => handleSwitchPage('last')}>Left</button> : ''}

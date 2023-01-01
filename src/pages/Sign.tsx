@@ -92,17 +92,18 @@ const Sign = () => {
           </div>
         </div>
       </div>
-      {
-        currentStep === 1 
-        ? <CreateSign />
-        : currentStep === 2
-        ? <UploadDocument />
-        : currentStep === 3
-        ? <StartSign />
-        : currentStep === 4
-        ? <DownloadResult />
-        : null
-      }
+      <div className={currentStep === 1 ? '' : 'hiddenSection'}>
+        <CreateSign />
+      </div>
+      <div className={currentStep === 2 ? '' : 'hiddenSection'}>
+        <UploadDocument />
+      </div>
+      <div className={currentStep === 3 ? '' : 'hiddenSection'}>
+        <StartSign />
+      </div>
+      <div className={currentStep === 4 ? '' : 'hiddenSection'}>
+        <DownloadResult />
+      </div>
 
       {/* step也用全局狀態管理 */}
       <div className="flex flex-col sm:flex-row justify-center items-center mt-[60px]">

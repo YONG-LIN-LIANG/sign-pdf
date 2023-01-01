@@ -22,6 +22,10 @@ body {
   /* font-family: 'Roboto', sans-serif; */
 }
 
+.hiddenSection {
+  @apply invisible absolute -z-[10] w-0 h-0 overflow-hidden;
+}
+
 @layer components {
   .flex-center {
     @apply flex justify-center items-center;
