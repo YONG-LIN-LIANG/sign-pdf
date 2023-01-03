@@ -227,8 +227,8 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
         {
           !uploadFileType && (
             <div className="flex flex-col items-center text-[#595ED3]">
-            <TrashcanIcon />
-            <span className="mt-[12px]">請上傳檔案</span>
+              <TrashcanIcon />
+              <span className="mt-[12px]">請上傳檔案</span>
             </div>
           )
         }
