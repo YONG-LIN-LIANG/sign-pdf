@@ -21,6 +21,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@types/fabric": "^4.5.14",
     "@types/node": "^18.11.9",
     "@types/pdfjs-dist": "^2.10.378",
     "@types/react": "^18.0.17",

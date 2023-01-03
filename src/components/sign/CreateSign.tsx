@@ -230,7 +230,7 @@ const CreateSign = () => {
         <div className={`animation absolute select-none ${isCreateSign ? 'left-[10px] z-[2] w-[132px]' : 'left-[142px] z-[2] w-[144px]'} top-[8.5px] h-[40px] bg-[#595ED3] rounded-full`}></div>
       </ul>
 
-      <div className="flex flex-col lg:flex-row mx-auto mt-[40px] w-[80%] max-w-[586px] lg:max-w-[1000px]">
+      <div className="flex flex-col lg:flex-row lg:justify-center mx-auto mt-[40px] w-[80%] mmd:w-full lg:max-w-[1000px]">
         {/* 我的簽名檔(左側) */}
         <MySign />
         {/* 右側 */}
@@ -255,7 +255,7 @@ const CreateSign = () => {
           <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">簽名圖樣<span className="ml-[4px] text-[#FF7070]">*</span></h4>
           {/* 手寫簽名 */}
           <div className={isCreateSign ? '' : 'invisible absolute -z-[10]'}>
-            <div ref={drawingBoardRef} className={`relative w-full lg:w-[586px] h-[340px] bg-[#fff] rounded-[5px] overflow-hidden ${!formError.drawingBoard && isButtonClick.drawingArea ? 'border border-[#f00]' : ''}`}>
+            <div ref={drawingBoardRef} className={`relative w-full h-[340px] bg-[#fff] rounded-[5px] overflow-hidden ${!formError.drawingBoard && isButtonClick.drawingArea ? 'border border-[#f00]' : ''}`}>
                 <canvas
                 className="bg-[#fff]"
                 ref={canvasRef}

@@ -1,8 +1,10 @@
 import TrashcanIcon from "@/components/svg/Trashcan"
 import UploadIcon from "@/components/svg/Upload"
-import { useRef, useState, useEffect, createContext } from "react"
+import ArrowIcon from "@/components/svg/Arrow"
+import { useRef, useState, useEffect } from "react"
 import { pdfjs } from "react-pdf"
-import { PDFDocumentProxy } from 'pdfjs-dist';
+import { useAtom } from "jotai"
+import { pdfAtom, setPdf } from '@/store/index'
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 interface FormError {
   signName?: boolean;
@@ -25,10 +27,12 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const [draggingFile, setDraggingFile] = useState<boolean>(false)
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
-  const [uploadFileType, setUploadFileType] = useState('')
-  const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null)
+  const [uploadFileType, setUploadFileType] = useState<string>('')
+  const [uploadFileName, setUploadFileName] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [pdfLoading, setPdfLoading] = useState<boolean>(false)
+  const [pdf,] = useAtom(pdfAtom)
+  const [, displayPdf] = useAtom(setPdf)
   useEffect(() => {
     console.log('latest pdf', pdf)
     setPdfLoading(true)
@@ -78,10 +82,8 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     e.preventDefault()
     e.stopPropagation()
     const allowExtension = ['png', 'jpg', 'pdf']
-    console.log('drop', e.dataTransfer.files)
     const extensionArr = e.dataTransfer.files[0].name.split(".")
     const extension = extensionArr[extensionArr.length - 1]
-    console.log(extension)
     if(!allowExtension.includes(extension)) {
       setDraggingFile(false)
       fileDivRef.current?.classList.remove('dragover')
@@ -90,7 +92,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     }
     if(fileInputRef.current !== null) {
       fileInputRef.current.files = e.dataTransfer.files
-      console.log(fileInputRef.current.files)
       setUploadFileType(e.dataTransfer.files[0].type)
       handleFileImage(e.dataTransfer.files[0])
     }
@@ -104,6 +105,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     console.log('get file')
     const newFile = e.target.files[0]
     console.log('newfileee', newFile)
+    setUploadFileName(newFile.name)
     handleFileImage(newFile)
   }
 
@@ -136,11 +138,9 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   }
 
   const handleFileImage = (file: any) => {
-    console.log('deal file image', file)
     const fileReader = new FileReader()
     file.type.includes("pdf") ? fileReader.readAsArrayBuffer(file) : fileReader.readAsDataURL(file)
     fileReader.onload = function () {
-      console.log('check', this.result, thumbnailRef.current, file.type.includes("image"))
       if(this.result) {
         setUploadFileType(file.type)
         if(file.type.includes("pdf")) {
@@ -153,7 +153,8 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
           loadingTask.promise.then(
             function (pdf) {
               console.log("PDF loaded", pdf)
-              setPdf(pdf)
+              // setPdf 放到jotai裡全域使用
+              displayPdf({pdf})
               setCurrentPage(1)
             },
             function (reason) {
@@ -203,20 +204,24 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
 
       <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">{uploadType === 'pdf' ? '預覽文件' : '預覽簽名檔'}</h4>
       <div className="flex-center">
-        <div  className={uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10] h-0 overflow-hidden'}>
-          {currentPage ?<div className="mb-[10px] text-center">{currentPage} / {pdf && pdf._pdfInfo.numPages}</div> : ''}
-          <div className="flex items-center">
-            {currentPage ? <button onClick={() => handleSwitchPage('last')}>Left</button> : ''}
-            <div className="flex-center w-full h-full min-w-[300px] min-h-[400px] mx-[20px]">
+        <div  className={`${uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10] h-0 overflow-hidden'} text-center`}>
+          <div className="flex flex-col">
+            <div className="flex-center w-full h-full min-w-[300px] min-h-[400px]">
               <canvas className={!pdfLoading ? '' : 'invisible absolute -z-[10]'} ref={pdfCanvasRef} width="500" height="500"></canvas>
-              {pdfLoading && <div className="w-full h-full text-center">Loading...</div>}
+              {pdfLoading && <div className="w-full h-full">Loading...</div>}
             </div>
-            {currentPage ? <button onClick={() => handleSwitchPage('next')}>Right</button> : ''}
+            <div className="flex-center mt-[14px]">
+              {currentPage ? <button onClick={() => handleSwitchPage('last')} className={`${(currentPage > 1 && pdf?._pdfInfo.numPages !== 1) ? 'text-[#787CDA]' : 'text-[#BDBDBD]'}`}><ArrowIcon/></button> : ''}
+              {currentPage ?<div className="h-[31px] mb-[10px] mx-[24px] leading-[38px] text-[14px] text-[#828282]">{currentPage} / {pdf && pdf._pdfInfo.numPages}</div> : ''}
+              {currentPage ? <button onClick={() => handleSwitchPage('next')} className={`${currentPage < pdf?._pdfInfo.numPages ? 'text-[#787CDA]' : 'text-[#BDBDBD]'} rotate-180`}><ArrowIcon/></button> : ''}
+            </div>
+            <h5 className="mt-[14px] text-[12px]">{uploadFileName}</h5>
           </div>
         </div>
 
-        <div className={uploadFileType.includes('image') ? 'flex-center w-[200px] h-[120px] border' : 'invisible absolute -z-[10]'}>
+        <div className={uploadFileType.includes('image') ? 'flex flex-col items-center w-[200px] h-[120px] border' : 'invisible absolute -z-[10]'}>
           <img ref={thumbnailRef} src="" className="object-contain w-full h-full" />
+          <h5 className="mt-[14px] text-[12px]">{uploadFileName}</h5>
         </div>
         
         {

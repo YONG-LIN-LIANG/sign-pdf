@@ -1,4 +1,5 @@
 import { atom } from "jotai"
+import { PDFDocumentProxy } from 'pdfjs-dist';
 // 分messageBox 和 dialog
 
 // messageBox: 文字內容、樣式
@@ -30,6 +31,8 @@ export interface Sign {
 export const messageBox = atom<MessageBox>({isDisplay: false, isMask: false, dialogName: '', content: ""})
 export const dialogAtom = atom<Dialog>({isDisplay: false, dialogName: '', props: {}})
 export const signListAtom = atom<Sign[]>([])
+export const pdfAtom = atom<PDFDocumentProxy | null>(null)
+// export const selectSign = atom<string>("")
 
 export const displayMessageBox = atom(
   () => "",
@@ -90,3 +93,17 @@ export const removeSign = atom(
     }
   }
 )
+
+export const setPdf = atom(
+  () => "",
+  (get, set, {pdf}) => {
+    set(pdfAtom, pdf)
+  }
+)
+
+// export const setSelectSign = atom(
+//   () => "",
+//   (get, set, {url}) => {
+
+//   }
+// )
