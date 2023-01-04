@@ -32,8 +32,14 @@ export const messageBox = atom<MessageBox>({isDisplay: false, isMask: false, dia
 export const dialogAtom = atom<Dialog>({isDisplay: false, dialogName: '', props: {}})
 export const signListAtom = atom<Sign[]>([])
 export const pdfAtom = atom<PDFDocumentProxy | null>(null)
+export const stepAtom = atom<number>(1)
 // export const selectSign = atom<string>("")
-
+export const setCurrentState = atom(
+  () => "",
+  (get, set, {step}) => {
+    set(stepAtom, step)
+  }
+)
 export const displayMessageBox = atom(
   () => "",
   (get, set, props: MessageBox) => {

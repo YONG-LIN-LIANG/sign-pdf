@@ -3,33 +3,29 @@ import { useRef, useState, useEffect } from "react"
 import LastIcon from "@/components/svg/Last"
 import NextIcon from "@/components/svg/Next"
 import ArrowIcon from "@/components/svg/Arrow"
+import FabricPage from "@/components/sign/FabricPage"
 import { useAtom } from "jotai"
-import { pdfAtom } from '@/store/index'
+import { pdfAtom, stepAtom } from '@/store/index'
 import { fabric } from "fabric"
 const StartSign = () => {
   const [pdf] = useAtom(pdfAtom)
-  const [canvasList, setCanvasList] = useState<(fabric.Canvas | null)[]>([])
+  const [step] = useAtom(stepAtom)
+  // const [canvasList, setCanvasList] = useState<(fabric.Canvas | null)[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const mainRefs = useRef<(HTMLCanvasElement | null)[]>([])
-  // 填上pdf圖到canvas裡，所以每次換頁時都會填一次，應該可以直接在handleRenderPdfPage function處理
-  useEffect(() => {
-    handleRenderPdfPage()
-  }, [pdf, currentPage])
+  const mainRef = useRef<HTMLCanvasElement | null>(null)
+  const fabricContainerRef = useRef<HTMLDivElement | null>(null)
+  // 順序
+  // 1. 顯示pdf頁
+  // 2. 點擊新增簽名，將pdf轉圖給fabric當基底
+  // useEffect(() => {
+  //   handleRenderPdfPage()
+  // }, [pdf, currentPage])
   // 建立主要的canvas
   useEffect(() => {
-    if(mainRefs !== null) {
-      console.log("ppp", mainRefs)
-      const totalPage = pdf?._pdfInfo.numPages
-      const canvasArr = Array.from(Array(totalPage).keys())
-      console.log("ooo", canvasArr)
-      canvasArr.map((v, i) => {
-        const c = new fabric.Canvas(mainRefs.current[i])
-        c.setDimensions({width:600, height:600})
-        console.log("hhh", mainRefs.current[i])
-        setCanvasList((prev) => [...prev, c])
-      })
+    if(mainRef !== null) {
+      console.log("ppp", mainRef)
     }
-  }, [mainRefs])
+  }, [mainRef])
 
   // useEffect(() => {
   //   console.log("yyy", canvasList)
@@ -89,9 +85,14 @@ const StartSign = () => {
             <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] text-[#BDBDBD]`}><NextIcon /></button>
             <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`}>清除</button>
           </div>
-          <div className="flex-grow border border-[#E0E0E0]">
-            {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map((v, i) => (
-              <canvas ref={el => (mainRefs.current[i] = el)} className={`${currentPage === i+1 ? '' : 'hiddenSection'} w-full h-full ${i+1 === 1 ? 'bg-[#00f]' : 'bg-[#f00]'}`}></canvas>
+          <div ref={fabricContainerRef} className="flex-grow w-full h-full border border-[#E0E0E0]">
+            {/* 每個頁面做成fabric.js的component，然後在最外層做隱藏或顯示 */}
+            {/* <canvas ref={}></canvas> */}
+            {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map(i => (
+              <div className={currentPage === i+1 ? '' : 'hiddenSection'}>
+
+                <FabricPage page={i+1} />
+              </div>
             ))}
           </div>
           <div className="flex-none flex justify-center mt-[18px]">

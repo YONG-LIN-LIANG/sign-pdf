@@ -5,12 +5,13 @@ import StartSign from "@/components/sign/StartSign"
 import DownloadResult from "@/components/sign/DownloadResult"
 import { useState, useEffect, useRef } from "react"
 import { useAtom } from "jotai"
-import { displayMessageBox, signListAtom, setSignList, pdfAtom } from '@/store/index'
+import { displayMessageBox, signListAtom, setSignList, pdfAtom, setCurrentState } from '@/store/index'
 const Sign = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [signList] = useAtom(signListAtom)
   const [, displaySignList] = useAtom(setSignList)
   const [, setMessageBox] = useAtom(displayMessageBox)
+  const [, displayStep] = useAtom(setCurrentState)
   const [pdf] = useAtom(pdfAtom)
   const progressBarRef = useRef<any>(null)
   useEffect(() => {
@@ -35,6 +36,7 @@ const Sign = () => {
     }
     scrollTo(0, 0)
     setCurrentStep(step)
+    displayStep({step})
     progressBarRef.current.style.animation = `step${step-1}ToStep${step} 1s linear forwards`
   }
   const stepList = [
