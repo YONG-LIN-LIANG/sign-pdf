@@ -25,6 +25,9 @@ body {
 .hiddenSection {
   @apply invisible absolute -z-[10] w-0 h-0 overflow-hidden;
 }
+.pdfHiddenSection {
+  @apply invisible absolute -z-[10] overflow-hidden;
+}
 
 @layer components {
   .flex-center {

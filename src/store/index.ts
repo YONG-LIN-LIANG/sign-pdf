@@ -33,6 +33,8 @@ export const dialogAtom = atom<Dialog>({isDisplay: false, dialogName: '', props:
 export const signListAtom = atom<Sign[]>([])
 export const pdfAtom = atom<PDFDocumentProxy | null>(null)
 export const stepAtom = atom<number>(1)
+export const pdfCombinePageAtom = atom<number>(1)
+export const signToPdfAtom = atom<{page: number, imageUrl: string} | null>(null)
 // export const selectSign = atom<string>("")
 export const setCurrentState = atom(
   () => "",
@@ -104,6 +106,23 @@ export const setPdf = atom(
   () => "",
   (get, set, {pdf}) => {
     set(pdfAtom, pdf)
+  }
+)
+
+export const setPdfCombinePage = atom(
+  () => "",
+  (get, set, {page}) => {
+    set(pdfCombinePageAtom, page)
+  }
+)
+
+export const setSignToPdf = atom(
+  () => "",
+  (get, set, {page, imageUrl}) => {
+    set(signToPdfAtom, {page, imageUrl})
+    setTimeout(() => {
+      set(signToPdfAtom, {page: 0, imageUrl: ""})
+    }, 100)
   }
 )
 

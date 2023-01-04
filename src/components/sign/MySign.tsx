@@ -1,10 +1,14 @@
 import SignTrashcanIcon from "@/components/svg/SignTrashcan"
+import PlusIcon from "@/components/svg/Plus"
 import { useAtom } from "jotai"
-import { Sign, signListAtom, displayDialog } from "@/store/index"
+import { stepAtom, Sign, signListAtom, displayDialog, pdfCombinePageAtom, setSignToPdf } from "@/store/index"
 
 const MySign = ({type, onSelectSign}: {type?:string, onSelectSign?: Function}) => {
   const [signList,] = useAtom(signListAtom)
   const [, setDialog] = useAtom(displayDialog)
+  const [, displaySignToPdf] = useAtom(setSignToPdf)
+  const [step] = useAtom(stepAtom)
+  const [pdfCombinePage] = useAtom(pdfCombinePageAtom)
   const handleOpenDialog = (id: number) => {
     console.log('ddd')
     setDialog({isDisplay: true, dialogName: 'removeSign', props: {id}})
@@ -15,7 +19,10 @@ const MySign = ({type, onSelectSign}: {type?:string, onSelectSign?: Function}) =
       console.log("event", e, e.target)
       onSelectSign(imageUrl)
     }
-     
+  }
+
+  const handleAddToPdf = (image: string) => {
+    displaySignToPdf({page: pdfCombinePage, imageUrl: image})
   }
   return (
     <div className="flex flex-col flex-none w-full lg:w-[188px]">
@@ -30,8 +37,13 @@ const MySign = ({type, onSelectSign}: {type?:string, onSelectSign?: Function}) =
                 <div className="h-[70px]">
                   <img src={ sign.image } alt="" className="object-contain w-full h-full bg-[#fff]" />
                 </div>
-                
-                <button onClick={() => handleOpenDialog(sign.id)} className="animation opacity-0 absolute right-0 bottom-0 flex-center w-[32px] h-[32px] bg-[#FF7070] rounded-[5px]"><SignTrashcanIcon /></button>
+                {
+                  step === 3 ? (
+                    <button onClick={() => handleAddToPdf(sign.image)} className="animation opacity-0 absolute right-0 bottom-0 flex-center w-[32px] h-[32px] bg-[#787CDA] rounded-[5px]"><PlusIcon /></button>
+                  ):(
+                    <button onClick={() => handleOpenDialog(sign.id)} className="animation opacity-0 absolute right-0 bottom-0 flex-center w-[32px] h-[32px] bg-[#FF7070] rounded-[5px]"><SignTrashcanIcon /></button>
+                  )
+                }
               </li>
             ))
             : <div>目前無簽名</div> 
