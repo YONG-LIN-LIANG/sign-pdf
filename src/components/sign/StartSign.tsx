@@ -134,7 +134,7 @@ const StartSign = () => {
             {/* 每個頁面做成fabric.js的component，然後在最外層做隱藏或顯示 */}
             <canvas className={pdfArr.find(v => v.page === currentPage)?.isEdit === true ? 'hiddenSection' : ''} ref={pdfCanvasRef}></canvas>
             {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map(i => (
-              <div className={pdfArr.find(v => v.page === i+1)?.isEdit === true ? '' : 'hiddenSection'}>
+              <div className={pdfArr.find(v => v.page === i+1)?.isEdit === true && currentPage === i+1 ? '' : 'hiddenSection'}>
                 <FabricPage page={i+1} />
               </div>
             ))}
