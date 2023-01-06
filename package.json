@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "fabric": "^5.3.0",
+    "fabric": "^4.6.0",
     "formik": "^2.2.9",
     "jotai": "^1.9.0",
     "module-name": "^0.0.1-security",

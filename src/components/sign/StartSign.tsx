@@ -135,7 +135,7 @@ const StartSign = () => {
             <canvas className={pdfArr.find(v => v.page === currentPage)?.isEdit === true ? 'hiddenSection' : ''} ref={pdfCanvasRef}></canvas>
             {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map(i => (
               <div className={pdfArr.find(v => v.page === i+1)?.isEdit === true && currentPage === i+1 ? '' : 'hiddenSection'}>
-                <FabricPage page={i+1} />
+                <FabricPage page={i+1} bgImage={pdfArr.find(v => v.page === i+1 && v.isEdit)?.imageUrl} />
               </div>
             ))}
           </div>
