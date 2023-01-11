@@ -6,38 +6,76 @@ import { KeyboardEvent } from "@/utils/type"
 const FabricPage = ({page, bgImage}:{page:number, bgImage: string | undefined}) => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
   const fabricRef = useRef<HTMLCanvasElement | null>(null)
+  // 目前要新增的簽名
   const [signToPdf] = useAtom(signToPdfAtom)
+  // 目前到第幾階段
   const [step] = useAtom(stepAtom)
 
   const canvasOriginalHeight = 800;
   const canvasOriginalWidth = 800;
-
+  
   // 建立fabric canvas
   useEffect(() => {
-    console.log("000", signToPdf, page)
-    if(signToPdf !== null && signToPdf.page === page) {
-      const { imageUrl } = signToPdf
-      const c = new fabric.Canvas(fabricRef.current, {
-        width:600,
-        height: 600,
-        selection: false
-      });
-      // c.setWidth(619)
-      // c.setHeight(639)
-      fabric.Image.fromURL(imageUrl, (img) => {
-        
-        img.scaleToWidth(200);
-        img.scaleToHeight(200);
-        // canvas.defaultCursor = 'move'; 
-        // canvas.on()
-        c.add(img).renderAll();
-        // img.centerH();
-        
-      });
-      setCanvas(c);
+    setCanvas(
+      new fabric.Canvas(fabricRef.current)
+    )
+  }, [fabricRef])
+  // 當fabric canvas及文件圖載入後把文件背景圖放到canvas中並設定canvas尺寸為文件圖片尺寸
+  useEffect(() => {
+    if(bgImage) {
+      fabric.Image.fromURL(bgImage, (img: fabric.Image) => {
+        canvas?.setBackgroundImage(bgImage, () => canvas.renderAll())
+        const width = img.width
+        const height = img.height
+        if(width && height) {
+          // 設定canvas尺寸
+          canvas?.setDimensions({width, height})
+        }
+      })
     }
+  }, [canvas, bgImage])
+
+  // 新增簽名到fabric canvas
+  useEffect(() => {
+    if(signToPdf?.page === page) {
+      const { imageUrl } = signToPdf
+      console.log("kkk", imageUrl)
+      handleAddSign(imageUrl)
+    }
+  }, [signToPdf])
+  const handleAddSign = (url: string) => {
+    if(canvas) {
+      fabric.Image.fromURL(url, (img) => {
+        img.scaleToWidth(200)
+        img.scaleToHeight(200)
+        canvas.add(img)
+      })
+    }
+  }
+  // useEffect(() => {
+  //   console.log("000", signToPdf, page)
+  //   if(signToPdf !== null && signToPdf.page === page) {
+  //     const { imageUrl } = signToPdf
+  //     const c = new fabric.Canvas(fabricRef.current, {
+  //       width:600,
+  //       height: 600,
+  //       selection: false
+  //     });
+  //     // c.setWidth(619)
+  //     // c.setHeight(639)
+  //     fabric.Image.fromURL(imageUrl, (img) => {
+  //       img.scaleToWidth(200);
+  //       img.scaleToHeight(200);
+  //       // canvas.defaultCursor = 'move'; 
+  //       // canvas.on()
+  //       c.add(img).renderAll();
+  //       // img.centerH();
+        
+  //     });
+  //     setCanvas(c);
+  //   }
     
-  }, [step, fabricRef, signToPdf])
+  // }, [step, fabricRef, signToPdf])
 
 
 
@@ -57,38 +95,6 @@ const FabricPage = ({page, bgImage}:{page:number, bgImage: string | undefined}) 
   //     // console.log("sign image", signToPdf.imageUrl)
   //   }
   // }, [bgImage])
-
-  // useEffect(() => {
-  //   if(signToPdf !== null && signToPdf.page === page && canvas) {
-  //     const { imageUrl } = signToPdf
-  //     console.log("kkk")
-  //     // const image = new fabric.Image(imageUrl, {
-  //     //   width: 200,
-  //     //   height: 200,
-  //     //   top: 50,
-  //     //   left: 50
-  //     // });
-  //     // console.log("ooo", image)
-  //     // canvas.add(image)
-  //     // canvas.renderAll();
-  //     if(imageUrl) {
-  //       fabric.Image.fromURL(imageUrl, (img) => {
-  //         console.log("222", canvas, canvas.getZoom)
-          
-  //         img.scaleToWidth(200);
-  //         img.scaleToHeight(200);
-  //         // canvas.defaultCursor = 'move'; 
-  //         // canvas.on()
-  //         canvas.add(img).renderAll();
-  //         // img.centerH();
-          
-  //       });
-  //     //   canvas.add(newImg)
-  //     //   canvas.renderAll();
-  //     }
-      
-  //   }
-  // }, [canvas, signToPdf])
 
   useEffect(() => {
     window.addEventListener("keydown", handleUserKeyPress)
