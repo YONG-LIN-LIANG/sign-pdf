@@ -15,10 +15,12 @@ const StartSign = () => {
   const pdfCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
-  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1)
   const fabricContainerRef = useRef<HTMLDivElement | null>(null)
   const [pdfArr, setPdfArr] = useState<{page: number, imageUrl: string, isEdit: boolean}[]>([])
   const [isDeleteClick, setIsDeleteClick] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  let isRenderPdfArrLoading = false
   // 順序
   // 1. 顯示pdf頁
   // 2. 點擊新增簽名，將pdf轉圖給fabric當基底
@@ -26,9 +28,7 @@ const StartSign = () => {
   //   handleRenderPdfPage()
   // }, [pdf, currentPage])
   // 建立主要的canvas
-  useEffect(() => {
-    console.log("pdfArr", pdfArr)
-  }, [pdfArr])
+  
   useEffect(() => {
     if(signToPdf !== null && signToPdf.page !== 0) {
       console.log("signtopdf", signToPdf)
@@ -52,26 +52,46 @@ const StartSign = () => {
   }, [pdfCanvasRef])
 
   useEffect(() => {
-    const findPage = pdfArr.find((i:any) => i !== null && i?.page === currentPage)
-    console.log("666", step === 3 && (!findPage || !findPage.isEdit))
-    if(step === 3 && (!findPage || !findPage.isEdit)) {
+    // 每次換頁渲染一次canvas
+    if(step === 3 && pdfArr.length === pdf?._pdfInfo.numPages) {
+      console.log("rwrwrw")
       if(!currentPage)setCurrentPage((prev) => prev + 1)
-      handleRenderPdfPage()
+      handleRenderPdfPage(currentPage)
     }
     displayPdfCombinePage({page: currentPage})
-  }, [step, currentPage])
+  }, [step, currentPage, isLoading])
 
-  // const handleSelectSign = (imageUrl: string) => {
-  //   console.log("current image", imageUrl)
-  // }
-  const handleRenderPdfPage = () => {
+  useEffect(() => {
+    if(step === 3 && !pdfArr.length) {
+      // setIsLoading(true)
+      // 把全部渲染出來
+      for(let page = 1 ; page <= pdf?._pdfInfo.numPages; page++) {
+        console.log("yyy", isRenderPdfArrLoading)
+        if(!isRenderPdfArrLoading) {
+          handleRenderPdfPage(page)
+        }
+      }
+    }
+  }, [step])
+
+  // 跑完渲染pdfArr，把頁面賦歸到第一頁
+  useEffect(() => {
+    if(pdfArr.length === pdf?._pdfInfo.numPages) {
+      handleRenderPdfPage(1)
+      console.log("finish render", pdfArr)
+    }
+  }, [pdfArr])
+
+  const handleRenderPdfPage = (page: number) => {
     if(pdf) {
       console.log("pdf info", pdf)
-      const page = currentPage === 0 ? 1 : currentPage
-      pdf.getPage(page).then(function (page) {
-        console.log('page loaded')
+      const realPage = page ? page : currentPage
+      pdf.getPage(realPage).then(function (page) {
+        setIsLoading(true)
+        isRenderPdfArrLoading = true
+        console.log('page loaded', realPage)
         const scale = 1
-        const viewport = page.getViewport({ scale: scale})
+        const viewport = page.getViewport({ scale })
         // Prepare canvas using PDF dimensions
         if(canvas && ctx) {
           console.log('check viewport', viewport)
@@ -83,37 +103,31 @@ const StartSign = () => {
           }
           page.render(renderContext).promise.then(function() {
             const bg = canvas.toDataURL("image/png")
-            // console.log("bg", bg)
             const isPageExist = pdfArr.find(i => i.page === currentPage)
-            console.log("ppp", currentPage && !isPageExist)
-            if(currentPage && !isPageExist) {
+            console.log("ppp", realPage && !isPageExist)
+            // 還要檢查如果到最後一步時沒有翻頁到後面頁數，要把他加進outputDocumentArr
+            // 感覺一開始全部加進去表較省事
+            if(pdfArr.length !== pdf?._pdfInfo.numPages) {
+              console.log("eeee", realPage, pdf?._pdfInfo.numPages)
               const outputObj = {
-                page: currentPage,
-                imageUrl:bg
+                page: realPage,
+                imageUrl: bg
               }
               displayOutputDocumentArr({document: outputObj})
-              // 還要檢查如果到最後一步時沒有翻頁到後面頁數，要把他加進outputDocumentArr
-              // 感覺一開始全部加進去表較省事
               setPdfArr((prev) => (
                 [
                   ...prev,
                   {
-                    page: currentPage,
+                    page: realPage,
                     imageUrl: bg,
                     isEdit: false
                   }
                 ]
               ))
+              setIsLoading(false)
+              isRenderPdfArrLoading = false
             }
-            
           })
-          // Render PDF page into canvas context
-          
-          // const renderTask = page.render(renderContext)
-          // renderTask.promise.then(function () {
-          //   console.log('page rendered')
-          //   setPdfLoading(false)
-          // })
         }
       })
     }

@@ -42,7 +42,7 @@ export const stepAtom = atom<number>(1)
 export const pdfCombinePageAtom = atom<number>(1)
 export const signToPdfAtom = atom<{page: number, imageUrl: string} | null>(null)
 export const outputDocumentArr = atom<(OutputDocument | null)[]>([])
-// export const selectSign = atom<string>("")
+
 export const setCurrentState = atom(
   () => "",
   (get, set, {step}) => {
