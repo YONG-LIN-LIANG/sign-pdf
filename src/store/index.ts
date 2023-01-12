@@ -1,5 +1,6 @@
 import { atom } from "jotai"
 import { PDFDocumentProxy } from 'pdfjs-dist';
+import { fabric } from "fabric"
 // 分messageBox 和 dialog
 
 // messageBox: 文字內容、樣式
@@ -23,6 +24,11 @@ export interface Sign {
   title: string,
   image: string,
 }
+
+interface OutputDocument {
+  page: number,
+  imageUrl: string
+}
 // const messageBox = 
 
 // dialog: 燈箱名稱，props 
@@ -35,6 +41,7 @@ export const pdfAtom = atom<PDFDocumentProxy | null>(null)
 export const stepAtom = atom<number>(1)
 export const pdfCombinePageAtom = atom<number>(1)
 export const signToPdfAtom = atom<{page: number, imageUrl: string} | null>(null)
+export const outputDocumentArr = atom<(OutputDocument | null)[]>([])
 // export const selectSign = atom<string>("")
 export const setCurrentState = atom(
   () => "",
@@ -126,9 +133,25 @@ export const setSignToPdf = atom(
   }
 )
 
-// export const setSelectSign = atom(
-//   () => "",
-//   (get, set, {url}) => {
-
-//   }
-// )
+export const setOutputDocumentArr = atom(
+  () => "",
+  (get, set, {document}) => {
+    // 檢查裡面有無那個page，沒有的話直接push，有的話替換掉imageUrl
+    const {page, imageUrl} = document
+    const find = get(outputDocumentArr).find(i => i && i.page === page)
+    console.log("output result", find, document, get(outputDocumentArr))
+    let newDocuments
+    if(find) {
+      newDocuments = get(outputDocumentArr).map(i => {
+        if(i && i.page === page) {
+          i.imageUrl = imageUrl
+        }
+        return i
+      })
+      set(outputDocumentArr, newDocuments)
+    } else {  
+      newDocuments = [...get(outputDocumentArr), document]
+    }
+    set(outputDocumentArr, newDocuments)
+  }
+)

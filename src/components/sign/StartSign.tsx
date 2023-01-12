@@ -1,16 +1,16 @@
 import MySign from "@/components/sign/MySign"
 import { useRef, useState, useEffect } from "react"
-import LastIcon from "@/components/svg/Last"
-import NextIcon from "@/components/svg/Next"
+// import LastIcon from "@/components/svg/Last"
+// import NextIcon from "@/components/svg/Next"
 import ArrowIcon from "@/components/svg/Arrow"
 import FabricPage from "@/components/sign/FabricPage"
 import { useAtom } from "jotai"
-import { pdfAtom, stepAtom, setPdfCombinePage, signToPdfAtom } from '@/store/index'
-import { fabric } from "fabric"
+import { pdfAtom, stepAtom, setPdfCombinePage, signToPdfAtom, setOutputDocumentArr } from '@/store/index'
 const StartSign = () => {
   const [pdf] = useAtom(pdfAtom)
   const [step] = useAtom(stepAtom)
   const [signToPdf] = useAtom(signToPdfAtom)
+  const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
   const [, displayPdfCombinePage] = useAtom(setPdfCombinePage)
   const pdfCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
@@ -18,6 +18,7 @@ const StartSign = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
   const fabricContainerRef = useRef<HTMLDivElement | null>(null)
   const [pdfArr, setPdfArr] = useState<{page: number, imageUrl: string, isEdit: boolean}[]>([])
+  const [isDeleteClick, setIsDeleteClick] = useState(false)
   // 順序
   // 1. 顯示pdf頁
   // 2. 點擊新增簽名，將pdf轉圖給fabric當基底
@@ -84,7 +85,15 @@ const StartSign = () => {
             const bg = canvas.toDataURL("image/png")
             // console.log("bg", bg)
             const isPageExist = pdfArr.find(i => i.page === currentPage)
+            console.log("ppp", currentPage && !isPageExist)
             if(currentPage && !isPageExist) {
+              const outputObj = {
+                page: currentPage,
+                imageUrl:bg
+              }
+              displayOutputDocumentArr({document: outputObj})
+              // 還要檢查如果到最後一步時沒有翻頁到後面頁數，要把他加進outputDocumentArr
+              // 感覺一開始全部加進去表較省事
               setPdfArr((prev) => (
                 [
                   ...prev,
@@ -118,6 +127,14 @@ const StartSign = () => {
       setCurrentPage((prevState) => prevState - 1)
     }
   }
+
+  const handleDeleteSign = (canvas: any) => {
+    setIsDeleteClick(true)
+    const timer = setTimeout(() => {
+      setIsDeleteClick(false)
+      clearTimeout(timer)
+    },100)
+  }
   return (
     <section className="flex flex-col lg:flex-row lg:justify-center mx-auto mt-[40px] w-[80%] max-w-[586px] lg:max-w-[1000px]">
       <MySign type="allowSelect" />
@@ -126,16 +143,21 @@ const StartSign = () => {
         <span className="text-[#828282]">將左方簽名檔拖移置簽署文件中並調整位置與大小</span>
         <div className="flex flex-col w-full h-[780px] pt-[16px] px-[42px] pb-[22px] mt-[20px] bg-white rounded-[5px]">
           <div className="flex-none flex justify-end h-[32px] mb-[12px]">
-            <button className={`flex-center w-[32px] h-[32px] rounded-[5px] text-[#BDBDBD] bg-[#F2F2F2]`}><LastIcon /></button>
-            <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] text-[#BDBDBD]`}><NextIcon /></button>
-            <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`}>清除</button>
+            {/* <button className={`flex-center w-[32px] h-[32px] rounded-[5px] text-[#BDBDBD] bg-[#F2F2F2]`}><LastIcon /></button>
+            <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] text-[#BDBDBD]`}><NextIcon /></button> */}
+            <button onClick={handleDeleteSign} className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`}>清除</button>
           </div>
           <div ref={fabricContainerRef} className="flex-grow w-full h-full border border-[#E0E0E0] overflow-auto">
             {/* 每個頁面做成fabric.js的component，然後在最外層做隱藏或顯示 */}
             <canvas className={pdfArr.find(v => v.page === currentPage)?.isEdit === true ? 'hiddenSection' : ''} ref={pdfCanvasRef}></canvas>
             {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map(i => (
               <div className={pdfArr.find(v => v.page === i+1)?.isEdit === true && currentPage === i+1 ? '' : 'hiddenSection'}>
-                <FabricPage page={i+1} bgImage={pdfArr.find(v => v.page === i+1 && v.isEdit)?.imageUrl} />
+                <FabricPage 
+                  isDeleteClick={isDeleteClick} 
+                  page={i+1} 
+                  bgImage={pdfArr.find(v => v.page === i+1 && v.isEdit)?.imageUrl} 
+                  isEdit={pdfArr.find(v => v.page === i+1)?.isEdit}
+                />
               </div>
             ))}
           </div>
