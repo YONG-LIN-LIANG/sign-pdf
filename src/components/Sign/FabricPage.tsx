@@ -2,18 +2,20 @@ import { fabric } from "fabric"
 import { useRef, useState, useEffect, useImperativeHandle, forwardRef } from "react"
 import { useAtom } from "jotai"
 import { stepAtom, signToPdfAtom, setOutputDocumentArr } from '@/store/index'
-import { KeyboardEvent } from "@/utils/type"
+// import { KeyboardEvent } from "@/utils/type"
 const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolean, page:number, bgImage: string | undefined, isEdit: boolean | undefined}) => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
   const fabricRef = useRef<HTMLCanvasElement | null>(null)
+  const [originalBgImage, setOriginalBgImage] = useState<string>("")
   // 目前要新增的簽名
   const [signToPdf] = useAtom(signToPdfAtom)
   const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
-  useEffect(() => {
-    if(isEdit) {
-      handleUpdateDocumentArr()
-    }
-  }, [isEdit, bgImage])
+  // useEffect(() => {
+  //   if(isEdit && signToPdf?.page === page) {
+  //     console.log("yttty")
+  //     // handleUpdateDocumentArr()
+  //   }
+  // }, [isEdit, bgImage])
   // 目前到第幾階段
   const [step] = useAtom(stepAtom)
   useEffect(() => {
@@ -35,9 +37,13 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
   }, [fabricRef])
   // 當fabric canvas及文件圖載入後把文件背景圖放到canvas中並設定canvas尺寸為文件圖片尺寸
   useEffect(() => {
-    if(bgImage) {
-      fabric.Image.fromURL(bgImage, (img: fabric.Image) => {
-        canvas?.setBackgroundImage(bgImage, () => canvas.renderAll())
+    // 設定isEdit為true時，第一時間的bgImage暫存起來
+    if(isEdit && bgImage && !originalBgImage) {
+      setOriginalBgImage(bgImage)
+    }
+    if(originalBgImage) {
+      fabric.Image.fromURL(originalBgImage, (img: fabric.Image) => {
+        canvas?.setBackgroundImage(originalBgImage, () => canvas.renderAll())
         const width = img.width
         const height = img.height
         if(width && height) {
@@ -46,12 +52,14 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
         }
       })
     }
-  }, [canvas, bgImage])
+  }, [canvas, originalBgImage, bgImage])
 
   // 新增簽名到fabric canvas
   useEffect(() => {
+    console.log("rrrrrr", signToPdf?.page, page)
     if(signToPdf?.page === page) {
       const { imageUrl } = signToPdf
+      console.log("imageUrl", imageUrl)
       if(canvas) {
         // 新增簽名至fabric canvas
         fabric.Image.fromURL(imageUrl, (img) => {
@@ -80,11 +88,13 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
   }
   
   const handleUpdateDocumentArr = () => {
+    console.log("here??????")
     if(canvas) {
       const imageUrl = canvas.toDataURL()
       // 每 mouseup 就將canvas輸出成圖片放到陣列裡找到page
       const outputObj = {
         page,
+        isEdit: true,
         imageUrl 
       }
       displayOutputDocumentArr({document: outputObj})

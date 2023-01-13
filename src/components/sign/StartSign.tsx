@@ -1,26 +1,48 @@
 import MySign from "@/components/sign/MySign"
-import { useRef, useState, useEffect } from "react"
+import { useState, useEffect } from "react"
+import CanvasPreview from "@/components/sign/CanvasPreview"
 // import LastIcon from "@/components/svg/Last"
 // import NextIcon from "@/components/svg/Next"
 import ArrowIcon from "@/components/svg/Arrow"
 import FabricPage from "@/components/sign/FabricPage"
 import { useAtom } from "jotai"
-import { pdfAtom, stepAtom, setPdfCombinePage, signToPdfAtom, setOutputDocumentArr } from '@/store/index'
+import { pdfAtom, outputDocumentArr, stepAtom, setPdfCombinePage, signToPdfAtom, setOutputDocumentArr } from '@/store/index'
 const StartSign = () => {
   const [pdf] = useAtom(pdfAtom)
+  const [outputArr] = useAtom(outputDocumentArr)
   const [step] = useAtom(stepAtom)
   const [signToPdf] = useAtom(signToPdfAtom)
-  const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
   const [, displayPdfCombinePage] = useAtom(setPdfCombinePage)
-  const pdfCanvasRef = useRef<HTMLCanvasElement | null>(null)
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const fabricContainerRef = useRef<HTMLDivElement | null>(null)
-  const [pdfArr, setPdfArr] = useState<{page: number, imageUrl: string, isEdit: boolean}[]>([])
+  const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
+  
+  const [currentPage, setCurrentPage] = useState<number>(0)
   const [isDeleteClick, setIsDeleteClick] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  let isRenderPdfArrLoading = false
+
+  useEffect(() => {
+    if(step === 3) {
+      
+      console.log("check", currentPage, pdf?._pdfInfo.numPages)
+      if(outputArr.length + 1 < pdf?._pdfInfo.numPages) {
+        const timer = setTimeout(() => {
+          setIsLoading(true)
+          setCurrentPage(prev => prev+1)
+        },500)
+        return () => clearTimeout(timer);
+      } else {
+        setIsLoading(false)
+      }
+    }
+  }, [step, currentPage])
+  useEffect(() => {
+    console.log("isLoading", isLoading)
+    if(!isLoading && step === 3) {
+      console.log("checkkkk")
+      setCurrentPage(1)
+      displayPdfCombinePage({page: 1})
+      console.log("result", outputArr)
+    }
+  }, [isLoading])
   // 順序
   // 1. 顯示pdf頁
   // 2. 點擊新增簽名，將pdf轉圖給fabric當基底
@@ -30,115 +52,63 @@ const StartSign = () => {
   // 建立主要的canvas
   
   useEffect(() => {
-    if(signToPdf !== null && signToPdf.page !== 0) {
+    const isEdit = outputArr.find(i => i?.page === signToPdf?.page)?.isEdit
+    console.log("isEdit", isEdit)
+    if(signToPdf !== null && signToPdf.page !== 0 && !isEdit) {
       console.log("signtopdf", signToPdf)
       // 更新pdfArr的page為編輯過
       // 到fabric component把背景還有sign都渲染出來
-      const newPdfArr = pdfArr.map((v, i) => {
-        if(v.page === signToPdf.page) {
-          v.isEdit = true
-        }
-        return v
-      })
-      setPdfArr(newPdfArr)
+      const bgImage = outputArr.find(i => i?.page === signToPdf.page)?.imageUrl
+      // const newPdfArr = pdfArr.map((v, i) => {
+      //   if(v.page === signToPdf.page) {
+      //     v.isEdit = true
+      //   }
+      //   return v
+      // })
+      // setPdfArr(newPdfArr)
+
+      const outputObj = {
+        page: signToPdf.page,
+        isEdit: true,
+        imageUrl: bgImage
+      }
+      console.log("outputObj", outputObj)
+      displayOutputDocumentArr({document: outputObj})
     }
   }, [signToPdf])
-  useEffect(() => {
-    if(pdfCanvasRef !== null) {
-      const c = pdfCanvasRef.current
-      setCanvas(c)
-      if(c) setCtx(c.getContext("2d"))
-    }
-  }, [pdfCanvasRef])
 
-  useEffect(() => {
-    // 每次換頁渲染一次canvas
-    if(step === 3 && pdfArr.length === pdf?._pdfInfo.numPages) {
-      console.log("rwrwrw")
-      if(!currentPage)setCurrentPage((prev) => prev + 1)
-      handleRenderPdfPage(currentPage)
-    }
-    displayPdfCombinePage({page: currentPage})
-  }, [step, currentPage, isLoading])
+  // useEffect(() => {
+  //   // 每次換頁渲染一次canvas
+  //   if(step === 3 && pdfArr.length === pdf?._pdfInfo.numPages) {
+  //     console.log("rwrwrw")
+  //     if(!currentPage)setCurrentPage((prev) => prev + 1)
+  //     handleRenderPdfPage(currentPage)
+  //   }
+  //   displayPdfCombinePage({page: currentPage})
+  // }, [step, currentPage, isLoading])
 
-  useEffect(() => {
-    if(step === 3 && !pdfArr.length) {
-      // setIsLoading(true)
-      // 把全部渲染出來
-      for(let page = 1 ; page <= pdf?._pdfInfo.numPages; page++) {
-        console.log("yyy", isRenderPdfArrLoading)
-        if(!isRenderPdfArrLoading) {
-          handleRenderPdfPage(page)
-        }
-      }
-    }
-  }, [step])
-
-  // 跑完渲染pdfArr，把頁面賦歸到第一頁
-  useEffect(() => {
-    if(pdfArr.length === pdf?._pdfInfo.numPages) {
-      handleRenderPdfPage(1)
-      console.log("finish render", pdfArr)
-    }
-  }, [pdfArr])
-
-  const handleRenderPdfPage = (page: number) => {
-    if(pdf) {
-      console.log("pdf info", pdf)
-      const realPage = page ? page : currentPage
-      pdf.getPage(realPage).then(function (page) {
-        setIsLoading(true)
-        isRenderPdfArrLoading = true
-        console.log('page loaded', realPage)
-        const scale = 1
-        const viewport = page.getViewport({ scale })
-        // Prepare canvas using PDF dimensions
-        if(canvas && ctx) {
-          console.log('check viewport', viewport)
-          canvas.height = viewport.height
-          canvas.width = viewport.width
-          const renderContext = {
-            canvasContext: ctx,
-            viewport
-          }
-          page.render(renderContext).promise.then(function() {
-            const bg = canvas.toDataURL("image/png")
-            const isPageExist = pdfArr.find(i => i.page === currentPage)
-            console.log("ppp", realPage && !isPageExist)
-            // 還要檢查如果到最後一步時沒有翻頁到後面頁數，要把他加進outputDocumentArr
-            // 感覺一開始全部加進去表較省事
-            if(pdfArr.length !== pdf?._pdfInfo.numPages) {
-              console.log("eeee", realPage, pdf?._pdfInfo.numPages)
-              const outputObj = {
-                page: realPage,
-                imageUrl: bg
-              }
-              displayOutputDocumentArr({document: outputObj})
-              setPdfArr((prev) => (
-                [
-                  ...prev,
-                  {
-                    page: realPage,
-                    imageUrl: bg,
-                    isEdit: false
-                  }
-                ]
-              ))
-              setIsLoading(false)
-              isRenderPdfArrLoading = false
-            }
-          })
-        }
-      })
-    }
-  }
+  // useEffect(() => {
+  //   if(step === 3 && !pdfArr.length) {
+  //     // setIsLoading(true)
+  //     // 把全部渲染出來
+  //     for(let page = 1 ; page <= pdf?._pdfInfo.numPages; page++) {
+  //       console.log("yyy", isRenderPdfArrLoading)
+  //       if(!isRenderPdfArrLoading) {
+  //         handleRenderPdfPage(page)
+  //       }
+  //     }
+  //   }
+  // }, [step])
 
   const handleSwitchPage = (direction: string) => {
+    if(isLoading) return
     const totalPage = pdf?._pdfInfo.numPages
     if(direction === 'next' && currentPage < totalPage) {
       setCurrentPage((prevState) => prevState + 1)
+      displayPdfCombinePage({page: currentPage + 1})
     } else if(direction === 'last' && (currentPage > 1 && totalPage !== 1)){
       setCurrentPage((prevState) => prevState - 1)
+      displayPdfCombinePage({page: currentPage - 1})
     }
   }
 
@@ -147,7 +117,7 @@ const StartSign = () => {
     const timer = setTimeout(() => {
       setIsDeleteClick(false)
       clearTimeout(timer)
-    },100)
+    },2000)
   }
   return (
     <section className="flex flex-col lg:flex-row lg:justify-center mx-auto mt-[40px] w-[80%] max-w-[586px] lg:max-w-[1000px]">
@@ -161,24 +131,34 @@ const StartSign = () => {
             <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] text-[#BDBDBD]`}><NextIcon /></button> */}
             <button onClick={handleDeleteSign} className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`}>清除</button>
           </div>
-          <div ref={fabricContainerRef} className="flex-grow w-full h-full border border-[#E0E0E0] overflow-auto">
+          <div className={`relative flex-grow w-full h-full border border-[#E0E0E0] ${isLoading ? 'overflow-hidden' : 'overflow-auto'}`}>
             {/* 每個頁面做成fabric.js的component，然後在最外層做隱藏或顯示 */}
-            <canvas className={pdfArr.find(v => v.page === currentPage)?.isEdit === true ? 'hiddenSection' : ''} ref={pdfCanvasRef}></canvas>
+            {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map((i, key) => (
+              // 先全部顯示出來，並確實存到outputArr
+              <div className={outputArr.find(v => v?.page === key+1)?.isEdit === false && currentPage === key+1 && !isLoading ? '' : isLoading && (key + 1) ? '' : 'hiddenSection'}>
+                <CanvasPreview page={key+1} currentPage={currentPage} />
+              </div>
+            ))}
+            
+            
             {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map(i => (
-              <div className={pdfArr.find(v => v.page === i+1)?.isEdit === true && currentPage === i+1 ? '' : 'hiddenSection'}>
+              <div className={outputArr.find(v => v?.page === i+1)?.isEdit === true && currentPage === i+1 ? '' : 'hiddenSection'}>
                 <FabricPage 
                   isDeleteClick={isDeleteClick} 
                   page={i+1} 
-                  bgImage={pdfArr.find(v => v.page === i+1 && v.isEdit)?.imageUrl} 
-                  isEdit={pdfArr.find(v => v.page === i+1)?.isEdit}
+                  bgImage={outputArr.find(v => v?.page === i+1 && v.isEdit)?.imageUrl} 
+                  isEdit={outputArr.find(v => v?.page === i+1)?.isEdit}
                 />
               </div>
             ))}
+            <div className={`absolute left-0 top-0 w-full h-full ${isLoading ? 'bg-[#fff] loadingAnimation z-[30]' : '-z-[20]'}`}></div>
           </div>
           <div className="flex-none flex justify-center mt-[18px]">
-          {currentPage ? <button onClick={() => handleSwitchPage('last')} className={`${(currentPage > 1 && pdf?._pdfInfo.numPages !== 1) ? 'text-[#787CDA]' : 'text-[#BDBDBD]'}`}><ArrowIcon/></button> : ''}
-              {currentPage ?<div className="h-[31px] mb-[10px] mx-[24px] leading-[38px] text-[14px] text-[#828282]">{currentPage} / {pdf && pdf._pdfInfo.numPages}</div> : ''}
-              {currentPage ? <button onClick={() => handleSwitchPage('next')} className={`${currentPage < pdf?._pdfInfo.numPages ? 'text-[#787CDA]' : 'text-[#BDBDBD]'} rotate-180`}><ArrowIcon/></button> : ''}
+            {currentPage ? <button onClick={() => handleSwitchPage('last')} className={`${(currentPage > 1 && pdf?._pdfInfo.numPages !== 1) && !isLoading ? 'text-[#787CDA]' : 'text-[#BDBDBD]'}`}><ArrowIcon/></button> : ''}
+            {currentPage ?<div className="h-[31px] mb-[10px] mx-[24px] leading-[38px] text-[14px] text-[#828282]">
+              {!isLoading ? `${currentPage} / ${pdf?._pdfInfo.numPages}` : 'loading...'}
+            </div> : ''}
+            {currentPage ? <button onClick={() => handleSwitchPage('next')} className={`${currentPage < pdf?._pdfInfo.numPages && !isLoading ? 'text-[#787CDA]' : 'text-[#BDBDBD]'} rotate-180`}><ArrowIcon/></button> : ''}
           </div>
           
         </div>

@@ -22,6 +22,7 @@ const MySign = ({type, onSelectSign}: {type?:string, onSelectSign?: Function}) =
   }
 
   const handleAddToPdf = (image: string) => {
+    console.log("uuu", {page: pdfCombinePage, imageUrl: image})
     displaySignToPdf({page: pdfCombinePage, imageUrl: image})
   }
   return (

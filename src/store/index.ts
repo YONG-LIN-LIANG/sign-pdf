@@ -27,6 +27,7 @@ export interface Sign {
 
 interface OutputDocument {
   page: number,
+  isEdit: boolean
   imageUrl: string
 }
 // const messageBox = 
@@ -137,7 +138,7 @@ export const setOutputDocumentArr = atom(
   () => "",
   (get, set, {document}) => {
     // 檢查裡面有無那個page，沒有的話直接push，有的話替換掉imageUrl
-    const {page, imageUrl} = document
+    const {page, isEdit, imageUrl} = document
     const find = get(outputDocumentArr).find(i => i && i.page === page)
     console.log("output result", find, document, get(outputDocumentArr))
     let newDocuments
@@ -145,6 +146,7 @@ export const setOutputDocumentArr = atom(
       newDocuments = get(outputDocumentArr).map(i => {
         if(i && i.page === page) {
           i.imageUrl = imageUrl
+          i.isEdit = isEdit
         }
         return i
       })
