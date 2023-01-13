@@ -43,13 +43,6 @@ const StartSign = () => {
       console.log("result", outputArr)
     }
   }, [isLoading])
-  // 順序
-  // 1. 顯示pdf頁
-  // 2. 點擊新增簽名，將pdf轉圖給fabric當基底
-  // useEffect(() => {
-  //   handleRenderPdfPage()
-  // }, [pdf, currentPage])
-  // 建立主要的canvas
   
   useEffect(() => {
     const isEdit = outputArr.find(i => i?.page === signToPdf?.page)?.isEdit
@@ -59,14 +52,6 @@ const StartSign = () => {
       // 更新pdfArr的page為編輯過
       // 到fabric component把背景還有sign都渲染出來
       const bgImage = outputArr.find(i => i?.page === signToPdf.page)?.imageUrl
-      // const newPdfArr = pdfArr.map((v, i) => {
-      //   if(v.page === signToPdf.page) {
-      //     v.isEdit = true
-      //   }
-      //   return v
-      // })
-      // setPdfArr(newPdfArr)
-
       const outputObj = {
         page: signToPdf.page,
         isEdit: true,
@@ -76,29 +61,6 @@ const StartSign = () => {
       displayOutputDocumentArr({document: outputObj})
     }
   }, [signToPdf])
-
-  // useEffect(() => {
-  //   // 每次換頁渲染一次canvas
-  //   if(step === 3 && pdfArr.length === pdf?._pdfInfo.numPages) {
-  //     console.log("rwrwrw")
-  //     if(!currentPage)setCurrentPage((prev) => prev + 1)
-  //     handleRenderPdfPage(currentPage)
-  //   }
-  //   displayPdfCombinePage({page: currentPage})
-  // }, [step, currentPage, isLoading])
-
-  // useEffect(() => {
-  //   if(step === 3 && !pdfArr.length) {
-  //     // setIsLoading(true)
-  //     // 把全部渲染出來
-  //     for(let page = 1 ; page <= pdf?._pdfInfo.numPages; page++) {
-  //       console.log("yyy", isRenderPdfArrLoading)
-  //       if(!isRenderPdfArrLoading) {
-  //         handleRenderPdfPage(page)
-  //       }
-  //     }
-  //   }
-  // }, [step])
 
   const handleSwitchPage = (direction: string) => {
     if(isLoading) return

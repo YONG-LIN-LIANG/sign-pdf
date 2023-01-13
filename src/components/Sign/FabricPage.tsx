@@ -2,7 +2,7 @@ import { fabric } from "fabric"
 import { useRef, useState, useEffect, useImperativeHandle, forwardRef } from "react"
 import { useAtom } from "jotai"
 import { stepAtom, signToPdfAtom, setOutputDocumentArr } from '@/store/index'
-// import { KeyboardEvent } from "@/utils/type"
+
 const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolean, page:number, bgImage: string | undefined, isEdit: boolean | undefined}) => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
   const fabricRef = useRef<HTMLCanvasElement | null>(null)
@@ -10,12 +10,7 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
   // 目前要新增的簽名
   const [signToPdf] = useAtom(signToPdfAtom)
   const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
-  // useEffect(() => {
-  //   if(isEdit && signToPdf?.page === page) {
-  //     console.log("yttty")
-  //     // handleUpdateDocumentArr()
-  //   }
-  // }, [isEdit, bgImage])
+
   // 目前到第幾階段
   const [step] = useAtom(stepAtom)
   useEffect(() => {
@@ -31,10 +26,8 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
     setCanvas(
       new fabric.Canvas(fabricRef.current, { preserveObjectStacking:true })
     )
-    // displayCanvas(
-    //   {canvas: new fabric.Canvas(fabricRef.current, { preserveObjectStacking:true })}
-    // )
   }, [fabricRef])
+
   // 當fabric canvas及文件圖載入後把文件背景圖放到canvas中並設定canvas尺寸為文件圖片尺寸
   useEffect(() => {
     // 設定isEdit為true時，第一時間的bgImage暫存起來
