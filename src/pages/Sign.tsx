@@ -5,10 +5,14 @@ import StartSign from "@/components/sign/StartSign"
 import DownloadResult from "@/components/sign/DownloadResult"
 import { useState, useEffect, useRef } from "react"
 import { useAtom } from "jotai"
-import { setSignList } from '@/store/index'
+import { displayMessageBox, signListAtom, setSignList, pdfAtom, setCurrentState } from '@/store/index'
 const Sign = () => {
   const [currentStep, setCurrentStep] = useState(1)
+  const [signList] = useAtom(signListAtom)
   const [, displaySignList] = useAtom(setSignList)
+  const [, setMessageBox] = useAtom(displayMessageBox)
+  const [, displayStep] = useAtom(setCurrentState)
+  const [pdf] = useAtom(pdfAtom)
   const progressBarRef = useRef<any>(null)
   useEffect(() => {
     displaySignList()
@@ -19,9 +23,20 @@ const Sign = () => {
       progressBarRef.current.style.animation = `zeroToStep${currentStep} ${currentStep/2}s linear forwards`
     }
   },[])
-  const handleSwitchStep = (step: number) => {
+  const handleSwitchStep = (step: number, direction: string) => {
+    console.log('ooopdf', pdf)
+    const alertMessage = {isDisplay: true, isMask: false, dialogName: 'alert', content: '', basicStyle: 'text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'}
+    if(currentStep === 1 && !signList.length) {
+      // 檢查有沒有簽名
+      setMessageBox({...alertMessage, content: '請建立簽名檔'})
+      return
+    } else if(currentStep === 2 && !pdf && direction === 'next') {
+      setMessageBox({...alertMessage, content: '請上傳簽署文件'})
+      return
+    }
     scrollTo(0, 0)
     setCurrentStep(step)
+    displayStep({step})
     progressBarRef.current.style.animation = `step${step-1}ToStep${step} 1s linear forwards`
   }
   const stepList = [
@@ -92,31 +107,32 @@ const Sign = () => {
           </div>
         </div>
       </div>
-      {
-        currentStep === 1 
-        ? <CreateSign />
-        : currentStep === 2
-        ? <UploadDocument />
-        : currentStep === 3
-        ? <StartSign />
-        : currentStep === 4
-        ? <DownloadResult />
-        : null
-      }
+      <div className={currentStep === 1 ? '' : 'hiddenSection'}>
+        <CreateSign />
+      </div>
+      <div className={currentStep === 2 ? '' : 'hiddenSection'}>
+        <UploadDocument />
+      </div>
+      <div className={currentStep === 3 ? '' : 'hiddenSection'}>
+        <StartSign />
+      </div>
+      <div className={currentStep === 4 ? '' : 'hiddenSection'}>
+        <DownloadResult />
+      </div>
 
       {/* step也用全局狀態管理 */}
       <div className="flex flex-col sm:flex-row justify-center items-center mt-[60px]">
         {
-          currentStep !== 1 && <button className="flex-center w-[180px] h-[40px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(currentStep - 1)}>上一步</button>
+          currentStep !== 1 && <button className="flex-center w-[180px] h-[40px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(currentStep - 1, 'last')}>上一步</button>
         }
         {
-          currentStep === 1 && <button className={`flex-center w-[180px] h-[40px] ${currentStep !== 1 ? 'ml-[20px]' : ''} text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full`} onClick={() => handleSwitchStep(currentStep + 1)}>下一步</button>
+          currentStep === 1 && <button className={`flex-center w-[180px] h-[40px] ${currentStep === 1 && !signList.length ? 'text-[#fff] bg-[#BDBDBD]' : ''} ${currentStep !== 1 ? 'ml-[20px]' : ''} text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full`} onClick={() => handleSwitchStep(currentStep + 1, 'next')}>下一步</button>
         }
         {
           currentStep === 2
-          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(3)}>前往簽名</button>
+          ? <button className={`flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full ${!pdf ? 'text-[#fff] bg-[#BDBDBD]' : ''}`} onClick={() => handleSwitchStep(3, 'next')}>前往簽名</button>
           : currentStep === 3
-          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(4)}>前往下載</button>
+          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(4, 'next')}>前往下載</button>
           : currentStep === 4
           ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full">下載pdf</button>
           : null
