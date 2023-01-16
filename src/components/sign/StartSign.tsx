@@ -6,7 +6,15 @@ import CanvasPreview from "@/components/sign/CanvasPreview"
 import ArrowIcon from "@/components/svg/Arrow"
 import FabricPage from "@/components/sign/FabricPage"
 import { useAtom } from "jotai"
-import { pdfAtom, outputDocumentArr, stepAtom, setPdfCombinePage, signToPdfAtom, setOutputDocumentArr } from '@/store/index'
+import { 
+  pdfAtom, 
+  outputDocumentArr, 
+  stepAtom, 
+  setPdfCombinePage, 
+  signToPdfAtom, 
+  setOutputDocumentArr,
+  setOutputInfo
+} from '@/store/index'
 const StartSign = () => {
   const [pdf] = useAtom(pdfAtom)
   const [outputArr] = useAtom(outputDocumentArr)
@@ -14,24 +22,37 @@ const StartSign = () => {
   const [signToPdf] = useAtom(signToPdfAtom)
   const [, displayPdfCombinePage] = useAtom(setPdfCombinePage)
   const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
-  
+  const [, displayOutputInfo] = useAtom(setOutputInfo)
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [isDeleteClick, setIsDeleteClick] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
+  useEffect(() => {
+    console.log("update pdf")
+    setCurrentPage(1)
+    if(outputArr.length) {
+      displayOutputDocumentArr({document: null})
+      displayOutputInfo({
+        isSubmit: false,
+        docName: "",
+        extension: "pdf"
+      })
+    }
+    
+  },[pdf])
   useEffect(() => {
     if(step === 3) {
-      
-      console.log("check", outputArr.length, currentPage, pdf?._pdfInfo.numPages)
-      const startPoint = outputArr.length > 1 ? outputArr.length + 1 : outputArr.length
+      console.log("ooo", outputArr.length, pdf?._pdfInfo.numPages)
+      let timer: any = null
       if(outputArr.length < pdf?._pdfInfo.numPages) {
-        const timer = setTimeout(() => {
+        timer = setTimeout(() => {
           setIsLoading(true)
+          console.log(outputArr.length, "kkk", pdf?._pdfInfo.numPages)
           setCurrentPage(prev => prev+1)
         },500)
         return () => clearTimeout(timer);
       } else {
         setIsLoading(false)
+        clearTimeout(timer);
       }
     }
   }, [step, currentPage])

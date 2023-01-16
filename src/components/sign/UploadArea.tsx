@@ -4,7 +4,7 @@ import ArrowIcon from "@/components/svg/Arrow"
 import { useRef, useState, useEffect } from "react"
 import { pdfjs } from "react-pdf"
 import { useAtom } from "jotai"
-import { pdfAtom, setPdf } from '@/store/index'
+import { pdfAtom, setPdf, stepAtom, displayMessageBox } from '@/store/index'
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 interface FormError {
   signName?: boolean;
@@ -29,10 +29,12 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
   const [uploadFileType, setUploadFileType] = useState<string>('')
   const [uploadFileName, setUploadFileName] = useState<string>('')
-  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1)
   const [pdfLoading, setPdfLoading] = useState<boolean>(false)
   const [pdf,] = useAtom(pdfAtom)
   const [, displayPdf] = useAtom(setPdf)
+  const [step] = useAtom(stepAtom)
+  const [, setMessageBox] = useAtom(displayMessageBox)
   useEffect(() => {
     console.log('latest pdf', pdf)
     setPdfLoading(true)
@@ -48,10 +50,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   }, [uploadFileType, pdfCanvasRef]);
 
   useEffect(() => {
-    console.log('fff', formError)
-  }, [formError])
-  useEffect(() => {
-    console.log('iii', isClearUploadFile)
     if(isClearUploadFile) {
       setUploadFileType('')
       if(thumbnailRef.current) {
@@ -81,15 +79,8 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const onDrop = (e: any) => {
     e.preventDefault()
     e.stopPropagation()
-    const allowExtension = ['png', 'jpg', 'pdf']
-    const extensionArr = e.dataTransfer.files[0].name.split(".")
-    const extension = extensionArr[extensionArr.length - 1]
-    if(!allowExtension.includes(extension)) {
-      setDraggingFile(false)
-      fileDivRef.current?.classList.remove('dragover')
-      alert("只允許使用png, jpg, pdf圖檔")
-      return
-    }
+    const isFileLegal = handleIsFileLegal(e.dataTransfer.files[0])
+    if(!isFileLegal) return
     if(fileInputRef.current !== null) {
       fileInputRef.current.files = e.dataTransfer.files
       setUploadFileType(e.dataTransfer.files[0].type)
@@ -102,16 +93,38 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   }
   const onFileDrop = (e: any) => {
     e.preventDefault()
-    console.log('get file')
     const newFile = e.target.files[0]
-    console.log('newfileee', newFile)
+    const isFileLegal = handleIsFileLegal(newFile)
+    if(!isFileLegal) return
     setUploadFileName(newFile.name)
     handleFileImage(newFile)
   }
-
+  const handleIsFileLegal = (file: File) => {
+    // 1M
+    const limitSize = 1024 * 1024
+    const fileSize = file.size
+    const alertMessageStyle = {isDisplay: true, isMask: false, dialogName: 'alert', content: '', basicStyle: 'px-[20px] text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'}
+    const allowExtension = step === 1 ? ["png", "jpg"] : ["pdf"]
+    const extensionArr = file.name.split(".")
+    const extension = extensionArr[extensionArr.length - 1]
+    if(!allowExtension.includes(extension)) {
+      setDraggingFile(false)
+      fileDivRef.current?.classList.remove('dragover')
+      setMessageBox({...alertMessageStyle, content: `請上傳${allowExtension.join("、")}格式之檔案`})
+      // alert("只允許使用png, jpg, pdf圖檔")
+      return false
+    }
+    if(fileSize > limitSize) {
+      setMessageBox({...alertMessageStyle, content: `檔案大小不得大於 1M bytes`})
+      return false
+    }
+    return true
+  }
   const handleRenderPdfPage = () => {
     console.log('pdf instance', pdf)
     if(pdf) {
+      console.log("upload currentpage", currentPage)
+      if(!currentPage) return
       pdf.getPage(currentPage).then(function (page) {
         console.log('page loaded')
         const scale = 0.5
@@ -183,7 +196,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     <>
       <div 
         ref={fileDivRef} 
-        className={`flex flex-col justify-center items-center w-full h-[245px] border bg-[#FFFFFF80] rounded-[5px] select-none ${!formError.uploadArea && isButtonClick ? 'border-[#f00]' : 'border-[#fff]'}`}
+        className={`flex flex-col justify-center items-center w-full h-[245px] border bg-[#FFFFFF80] rounded-[5px] ${!formError.uploadArea && isButtonClick ? 'border-[#f00]' : 'border-[#fff]'}`}
         onDragEnter={onDragEnter}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
@@ -199,7 +212,8 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
           <span>檔案格式 {uploadType}</span>
           <span>檔案大小 ＜1MB</span>
         </div>
-        <input ref={fileInputRef} type="file" accept=".png, .jpg, application/pdf" className="absolute -z-[10]" onChange={onFileDrop} />
+        {/* ".png, .jpg, application/pdf" */}
+        <input ref={fileInputRef} type="file" accept={step === 1 ? ".png, .jpg" : "application/pdf"} className="absolute -z-[10]" onChange={onFileDrop} />
       </div>
 
       <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">{uploadType === 'pdf' ? '預覽文件' : '預覽簽名檔'}</h4>

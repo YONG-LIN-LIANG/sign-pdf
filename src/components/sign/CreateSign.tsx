@@ -9,10 +9,11 @@ import ActiveColorPickerIcon from "@/components/svg/ActiveColorPicker"
 import getTouchPos from "../../utils/getTouchPos"
 import getMousePos from "../../utils/getMousePos"
 import { useAtom } from "jotai"
-import { displayMessageBox, addSign } from '@/store/index'
+import { displayMessageBox, addSign, stepAtom } from '@/store/index'
 import React, { useState, useRef, useEffect } from "react"
 const CreateSign = () => {
   const [, setMessageBox] = useAtom(displayMessageBox)
+  const [step] = useAtom(stepAtom)
   const [, setAddSign] = useAtom(addSign)
   const [isCreateSign, setIsCreateSign] = useState<boolean>(true)
   const [drawingBoard, setDrawingBoard] = useState<{width: number, height: number}>({
@@ -210,7 +211,7 @@ const CreateSign = () => {
       <ul className="relative flex w-max mx-auto bg-[#FFFFFF80] rounded-full px-[10px] py-[8.5px]">
         <li 
           className={
-            `${tabStyle} animation select-none ${isCreateSign ? 'text-[#fff]' : 'text-[#828282]'}`
+            `${tabStyle} animation ${isCreateSign ? 'text-[#fff]' : 'text-[#828282]'}`
           } 
           onClick={() => setIsCreateSign(true)}
         >
@@ -219,7 +220,7 @@ const CreateSign = () => {
         </li>
         <li 
           className={
-            `${tabStyle} animation select-none ${!isCreateSign ? 'text-[#fff]' : 'text-[#828282]'}`
+            `${tabStyle} animation ${!isCreateSign ? 'text-[#fff]' : 'text-[#828282]'}`
           } 
           onClick={() => setIsCreateSign(false)}
         >
@@ -227,7 +228,7 @@ const CreateSign = () => {
           <span className="ml-[8px]">上傳簽名檔</span>
         </li>
         {/* 移動背景塊 */}
-        <div className={`animation absolute select-none ${isCreateSign ? 'left-[10px] z-[2] w-[132px]' : 'left-[142px] z-[2] w-[144px]'} top-[8.5px] h-[40px] bg-[#595ED3] rounded-full`}></div>
+        <div className={`animation absolute ${isCreateSign ? 'left-[10px] z-[2] w-[132px]' : 'left-[142px] z-[2] w-[144px]'} top-[8.5px] h-[40px] bg-[#595ED3] rounded-full`}></div>
       </ul>
 
       <div className="flex flex-col lg:flex-row lg:justify-center mx-auto mt-[40px] w-[80%] mmd:w-full lg:max-w-[1000px]">
@@ -292,8 +293,8 @@ const CreateSign = () => {
           </div>
         
           <div className={isCreateSign ? 'hidden' : ''}>
-            <UploadArea uploadType="png／jpg" onUploadSign={handleUploadSign} isClearUploadFile={isClearUploadFile} formError={formError} isButtonClick={isButtonClick.uploadArea} />
-            <button onClick={handleUploadSaveSign} className={`flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] text-[#fff] bg-[#595ED3] rounded-[5px] ${imgSrc && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>建立簽名檔</button>
+            <UploadArea uploadType={step === 1 ? "png／jpg" : "pdf"} onUploadSign={handleUploadSign} isClearUploadFile={isClearUploadFile} formError={formError} isButtonClick={isButtonClick.uploadArea} />
+            <button onClick={handleUploadSaveSign} className={`flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] rounded-[5px] ${imgSrc && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>建立簽名檔</button>
           </div>
         </div>
       </div>

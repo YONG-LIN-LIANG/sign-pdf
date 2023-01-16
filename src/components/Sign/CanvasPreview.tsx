@@ -4,6 +4,7 @@ import { pdfAtom, outputDocumentArr, stepAtom, setPdfCombinePage, signToPdfAtom,
 
 const CanvasPreview = ({page, currentPage}:{page:number, currentPage:number}) => {
   const [pdf] = useAtom(pdfAtom)
+  const [step] = useAtom(stepAtom)
   const [outputArr] = useAtom(outputDocumentArr)
   const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -18,12 +19,17 @@ const CanvasPreview = ({page, currentPage}:{page:number, currentPage:number}) =>
   }, [previewCanvasRef])
   useEffect(() => {
     // console.log('test', page, currentPage)
-    if(page === currentPage) handleRenderPdfPage()
-  }, [currentPage])
+    console.log("reew", page, currentPage)
+    if(step === 3 && outputArr.length !== pdf?._pdfInfo.numPages) {
+      if(page === currentPage) handleRenderPdfPage()
+    }
+  }, [currentPage, step])
 
   const handleRenderPdfPage = () => {
     if(pdf) {
       const realPage = page
+      if(!realPage) return
+      console.log("real page", realPage)
       pdf.getPage(realPage).then(function (page) {
         // console.log('page loaded', realPage)
         const scale = 1
