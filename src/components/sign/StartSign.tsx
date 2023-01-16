@@ -22,8 +22,9 @@ const StartSign = () => {
   useEffect(() => {
     if(step === 3) {
       
-      console.log("check", currentPage, pdf?._pdfInfo.numPages)
-      if(outputArr.length + 1 < pdf?._pdfInfo.numPages) {
+      console.log("check", outputArr.length, currentPage, pdf?._pdfInfo.numPages)
+      const startPoint = outputArr.length > 1 ? outputArr.length + 1 : outputArr.length
+      if(outputArr.length < pdf?._pdfInfo.numPages) {
         const timer = setTimeout(() => {
           setIsLoading(true)
           setCurrentPage(prev => prev+1)

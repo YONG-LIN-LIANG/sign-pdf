@@ -97,6 +97,10 @@ body {
 .messageBox--close {
   @apply opacity-0 pointer-events-none;
 }
+
+.extension-selector + .extension-selector {
+  @apply ml-[32px];
+}
 /* .animationProgress {
   animation: zeroToStep4 2s linear forwards;
 } */
