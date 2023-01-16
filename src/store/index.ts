@@ -26,9 +26,11 @@ export interface Sign {
 }
 
 interface OutputDocument {
-  page: number,
+  page: number
   isEdit: boolean
-  imageUrl: string
+  width: number
+  height: number
+  imageUrl: any
 }
 // const messageBox = 
 
@@ -43,7 +45,11 @@ export const stepAtom = atom<number>(1)
 export const pdfCombinePageAtom = atom<number>(1)
 export const signToPdfAtom = atom<{page: number, imageUrl: string} | null>(null)
 export const outputDocumentArr = atom<(OutputDocument | null)[]>([])
-
+export const outputInfoAtom = atom<{isSubmit: boolean, docName: string, extension: string}>({
+  isSubmit: false,
+  docName: "",
+  extension: "pdf"
+})
 export const setCurrentState = atom(
   () => "",
   (get, set, {step}) => {
@@ -138,7 +144,7 @@ export const setOutputDocumentArr = atom(
   () => "",
   (get, set, {document}) => {
     // 檢查裡面有無那個page，沒有的話直接push，有的話替換掉imageUrl
-    const {page, isEdit, imageUrl} = document
+    const {page, isEdit, imageUrl, width, height} = document
     const find = get(outputDocumentArr).find(i => i && i.page === page)
     console.log("output result", find, document, get(outputDocumentArr))
     let newDocuments
@@ -147,6 +153,10 @@ export const setOutputDocumentArr = atom(
         if(i && i.page === page) {
           i.imageUrl = imageUrl
           i.isEdit = isEdit
+          if(width || height) {
+            i.width = width
+            i.height = height
+          }
         }
         return i
       })
@@ -155,5 +165,19 @@ export const setOutputDocumentArr = atom(
       newDocuments = [...get(outputDocumentArr), document]
     }
     set(outputDocumentArr, newDocuments)
+  }
+)
+
+export const setOutputInfo = atom(
+  () => "",
+  (get, set, props: {isSubmit?: boolean, docName?: string, extension?: string}) => {
+    const currentInfo = get(outputInfoAtom)
+    set(outputInfoAtom, {...currentInfo, ...props})
+    if(props.isSubmit) {
+      const timer = setTimeout(() => {
+        set(outputInfoAtom, {...currentInfo, isSubmit: false})
+        clearTimeout(timer)
+      }, 3000)
+    }
   }
 )

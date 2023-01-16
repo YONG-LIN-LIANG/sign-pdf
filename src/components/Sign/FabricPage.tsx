@@ -83,7 +83,7 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
   const handleUpdateDocumentArr = () => {
     console.log("here??????")
     if(canvas) {
-      const imageUrl = canvas.toDataURL()
+      const imageUrl = canvas.toDataURL({format: "jpg"})
       // 每 mouseup 就將canvas輸出成圖片放到陣列裡找到page
       const outputObj = {
         page,

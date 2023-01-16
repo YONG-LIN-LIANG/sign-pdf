@@ -45,6 +45,8 @@ const CanvasPreview = ({page, currentPage}:{page:number, currentPage:number}) =>
               const outputObj = {
                 page: realPage,
                 isEdit: false,
+                width: viewport.width,
+                height: viewport.height,
                 imageUrl: bg
               }
               displayOutputDocumentArr({document: outputObj})
