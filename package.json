@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "fabric": "^4.6.0",
     "formik": "^2.2.9",
     "jotai": "^1.9.0",
     "module-name": "^0.0.1-security",
@@ -20,6 +21,8 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@types/fabric": "^4.5.14",
+    "@types/jspdf": "^2.0.0",
     "@types/node": "^18.11.9",
     "@types/pdfjs-dist": "^2.10.378",
     "@types/react": "^18.0.17",
@@ -27,6 +30,7 @@
     "@types/react-pdf": "^6.2.0",
     "@vitejs/plugin-react": "^2.1.0",
     "autoprefixer": "^10.4.13",
+    "jspdf": "^2.5.1",
     "postcss": "^8.4.18",
     "tailwindcss": "^3.2.3",
     "typescript": "^4.6.4",
