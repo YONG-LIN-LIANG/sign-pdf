@@ -18,7 +18,7 @@ const Sign = () => {
   const [outputArr] = useAtom(outputDocumentArr)
   const [pdf] = useAtom(pdfAtom)
   const progressBarRef = useRef<any>(null)
-  const alertMessage = {isDisplay: true, isMask: false, dialogName: 'alert', content: '', basicStyle: 'text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'}
+  const alertMessage = {isDisplay: true, isMask: false, dialogName: 'alert', content: '', basicStyle: 'w-[200px] text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'}
   useEffect(() => {
     displaySignList()
     if(progressBarRef) {

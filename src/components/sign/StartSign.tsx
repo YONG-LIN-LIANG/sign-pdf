@@ -115,11 +115,11 @@ const StartSign = () => {
             <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] text-[#BDBDBD]`}><NextIcon /></button> */}
             <button onClick={handleDeleteSign} className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`}>清除</button>
           </div>
-          <div className={`relative flex-grow w-full h-full border border-[#E0E0E0] ${isLoading ? 'overflow-hidden' : 'overflow-auto'}`}>
+          <div className={`relative flex-grow w-full h-full border border-[#E0E0E0] ${isLoading ? 'overflow-hidden' : 'max-w-[670px]  overflow-auto'}`}>
             {/* 每個頁面做成fabric.js的component，然後在最外層做隱藏或顯示 */}
             {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map((i, key) => (
               // 先全部顯示出來，並確實存到outputArr
-              <div className={outputArr.find(v => v?.page === key+1)?.isEdit === false && currentPage === key+1 && !isLoading ? '' : isLoading && (key + 1) ? '' : 'hiddenSection'}>
+              <div className={outputArr.find(v => v?.page === key+1)?.isEdit === false && currentPage === key+1 && !isLoading ? '' : isLoading && (key + 1) ? 'flex-center' : 'hiddenSection'}>
                 <CanvasPreview page={key+1} currentPage={currentPage} />
               </div>
             ))}

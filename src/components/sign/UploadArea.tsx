@@ -79,6 +79,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const onDrop = (e: any) => {
     e.preventDefault()
     e.stopPropagation()
+    console.log("new file", e.dataTransfer.files[0])
     const isFileLegal = handleIsFileLegal(e.dataTransfer.files[0])
     if(!isFileLegal) return
     if(fileInputRef.current !== null) {
@@ -100,22 +101,22 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     handleFileImage(newFile)
   }
   const handleIsFileLegal = (file: File) => {
-    // 1M
-    const limitSize = 1024 * 1024
+    // 3M大小限制
+    const limitSize = 3 * 1024 * 1024
     const fileSize = file.size
-    const alertMessageStyle = {isDisplay: true, isMask: false, dialogName: 'alert', content: '', basicStyle: 'px-[20px] text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'}
+    const alertMessageStyle = {isDisplay: true, isMask: false, dialogName: 'alert', content: '', basicStyle: 'w-[270px] text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'}
     const allowExtension = step === 1 ? ["png", "jpg"] : ["pdf"]
     const extensionArr = file.name.split(".")
     const extension = extensionArr[extensionArr.length - 1]
+    setDraggingFile(false)
+    fileDivRef.current?.classList.remove('dragover')
     if(!allowExtension.includes(extension)) {
-      setDraggingFile(false)
-      fileDivRef.current?.classList.remove('dragover')
       setMessageBox({...alertMessageStyle, content: `請上傳${allowExtension.join("、")}格式之檔案`})
-      // alert("只允許使用png, jpg, pdf圖檔")
       return false
     }
+    console.log("compare", fileSize, limitSize)
     if(fileSize > limitSize) {
-      setMessageBox({...alertMessageStyle, content: `檔案大小不得大於 1M bytes`})
+      setMessageBox({...alertMessageStyle, content: `檔案大小不得大於 3M bytes`})
       return false
     }
     return true
@@ -127,7 +128,12 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
       if(!currentPage) return
       pdf.getPage(currentPage).then(function (page) {
         console.log('page loaded')
-        const scale = 0.5
+        // scale彈性調整， 假設圖片寬1000px，容器500px，scale為500/1000
+        const testScale = 1
+        const testViewport = page.getViewport({ scale: testScale})
+        const originalWidth = testViewport.width
+        const containerWidth = 300
+        const scale = containerWidth / originalWidth
         const viewport = page.getViewport({ scale: scale})
         console.log(canvas, ctx, canvas && ctx)
         // Prepare canvas using PDF dimensions
@@ -210,7 +216,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
         { !draggingFile && <button onClick={() => fileInputRef.current?.click()} className="w-[86px] h-[32px] mt-[8px] mb-[20px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]">選擇檔案</button> }
         <div className="flex flex-col text-[12px] text-[#595ED3]">
           <span>檔案格式 {uploadType}</span>
-          <span>檔案大小 ＜1MB</span>
+          <span>檔案大小 ＜3MB</span>
         </div>
         {/* ".png, .jpg, application/pdf" */}
         <input ref={fileInputRef} type="file" accept={step === 1 ? ".png, .jpg" : "application/pdf"} className="absolute -z-[10]" onChange={onFileDrop} />
@@ -220,7 +226,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
       <div className="flex-center">
         <div  className={`${uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10] h-0 overflow-hidden'} text-center`}>
           <div className="flex flex-col">
-            <div className="flex-center w-full h-full min-w-[300px] min-h-[400px]">
+            <div className="flex-center w-full h-full min-w-[300px] min-h-[300px]">
               <canvas className={!pdfLoading ? '' : 'invisible absolute -z-[10]'} ref={pdfCanvasRef} width="500" height="500"></canvas>
               {pdfLoading && <div className="w-full h-full">Loading...</div>}
             </div>
@@ -229,13 +235,13 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
               {currentPage ?<div className="h-[31px] mb-[10px] mx-[24px] leading-[38px] text-[14px] text-[#828282]">{currentPage} / {pdf && pdf._pdfInfo.numPages}</div> : ''}
               {currentPage ? <button onClick={() => handleSwitchPage('next')} className={`${currentPage < pdf?._pdfInfo.numPages ? 'text-[#787CDA]' : 'text-[#BDBDBD]'} rotate-180`}><ArrowIcon/></button> : ''}
             </div>
-            <h5 className="mt-[14px] text-[12px]">{uploadFileName}</h5>
+            <h5 className="mt-[14px] text-[12px] text-[#333333]">{uploadFileName}</h5>
           </div>
         </div>
 
         <div className={uploadFileType.includes('image') ? 'flex flex-col items-center w-[200px] h-[120px] border' : 'invisible absolute -z-[10]'}>
           <img ref={thumbnailRef} src="" className="object-contain w-full h-full" />
-          <h5 className="mt-[14px] text-[12px]">{uploadFileName}</h5>
+          <h5 className="mt-[14px] text-[12px] text-[#333333]">{uploadFileName}</h5>
         </div>
         
         {

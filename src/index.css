@@ -86,7 +86,7 @@ body {
 }
 
 .messageBox {
-  @apply flex-center fixed top-12 left-1/2 min-w-[200px] h-[40px] rounded-lg text-[16px] text-center z-50;
+  @apply flex-center fixed top-12 left-1/2 h-[40px] rounded-lg text-[16px] text-center z-50;
   transition-duration: 0.4s;
 }
 
@@ -110,6 +110,12 @@ body {
   animation-duration: 1.2s;
   animation-direction: alternate;
   animation-iteration-count: infinite;
+}
+
+.myClass .upper-canvas {
+  /* width: 0 !important;
+  height: 0 !important; */
+  /* z-index: -50 !important; */
 }
 
 @keyframes opacity {

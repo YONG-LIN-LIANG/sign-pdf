@@ -168,7 +168,7 @@ const CreateSign = () => {
       clearTimeout(timer)
     }, 3000)
     if(!(recordDrawPath.length > 1 && signName)) {
-      setMessageBox({isDisplay: true, isMask: false, dialogName: 'alert', content: '請完成必填欄位！', basicStyle: 'text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'})
+      setMessageBox({isDisplay: true, isMask: false, dialogName: 'alert', content: '請完成必填欄位！', basicStyle: 'w-[200px] text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'})
     } else {
       const imageURL = canvas?.toDataURL()
       if(imageURL) {
@@ -178,7 +178,7 @@ const CreateSign = () => {
         handleClear()
         setSignName('')
         // 存到localStorage
-        setMessageBox({isDisplay: true, isMask: false, dialogName: 'success', content: '建立成功！', basicStyle: 'bg-[#E3FEC7] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
+        setMessageBox({isDisplay: true, isMask: false, dialogName: 'success', content: '建立成功！', basicStyle: 'w-[140px] bg-[#E3FEC7] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
       }
     }
     
@@ -196,14 +196,14 @@ const CreateSign = () => {
       clearTimeout(timer)
     }, 3000)
     if(!(signName && imgSrc)) {
-      setMessageBox({isDisplay: true, isMask: false, dialogName: 'alert', content: '請完成必填欄位！', basicStyle: 'text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'})
+      setMessageBox({isDisplay: true, isMask: false, dialogName: 'alert', content: '請完成必填欄位！', basicStyle: 'w-[200px] text-[#333333] bg-[#FF7070] shadow-[0_4px_12px_rgba(0,0,0,0.1)]', logoStyle: 'text-[#fff]'})
     } else {
       const newSignElement = {id: Date.now(), title: signName, image: imgSrc}
       setAddSign(newSignElement)
       setSignName('')
       setIsClearUploadFile(true)
       setImgSrc('')
-      setMessageBox({isDisplay: true, isMask: false, dialogName: 'success', content: '建立成功！', basicStyle: 'bg-[#E3FEC7] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
+      setMessageBox({isDisplay: true, isMask: false, dialogName: 'success', content: '建立成功！', basicStyle: 'w-[140px] bg-[#E3FEC7] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
     }
   }
   return (

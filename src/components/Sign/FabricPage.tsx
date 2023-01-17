@@ -24,7 +24,7 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
   // 建立fabric canvas
   useEffect(() => {
     setCanvas(
-      new fabric.Canvas(fabricRef.current, { preserveObjectStacking:true })
+      new fabric.Canvas(fabricRef.current, { preserveObjectStacking:true, containerClass: "myClass" })
     )
   }, [fabricRef])
 
@@ -55,15 +55,23 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
       console.log("imageUrl", imageUrl)
       if(canvas) {
         // 新增簽名至fabric canvas
+        const canvasCenter = canvas.getCenter()
         fabric.Image.fromURL(imageUrl, (img) => {
           img.scaleToWidth(200)
           img.scaleToHeight(200)
+          img.set({
+            left: canvasCenter.left,
+            top: canvasCenter.top,
+            selectable: true,
+            hasBorders: false,
+            // originX: 'center',
+            // originY: 'center'
+          })
           img.on('mouseup', function() {
             console.log('mouse up');
             handleUpdateDocumentArr()
           });
-          canvas.add(img)
-          canvas.renderAll();
+          canvas.add(img).renderAll()
         })
       }
     }
@@ -95,7 +103,7 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
     
   }
   return (
-    <canvas ref={fabricRef} className="w-full h-full"></canvas>
+    <canvas ref={fabricRef}></canvas>
   )
 }
 
