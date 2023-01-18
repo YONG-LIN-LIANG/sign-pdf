@@ -18,8 +18,6 @@ const CanvasPreview = ({page, currentPage}:{page:number, currentPage:number}) =>
     }
   }, [previewCanvasRef])
   useEffect(() => {
-    // console.log('test', page, currentPage)
-    console.log("reew", page, currentPage)
     if(step === 3 && outputArr.length !== pdf?._pdfInfo.numPages) {
       if(page === currentPage) handleRenderPdfPage()
     }
@@ -29,14 +27,10 @@ const CanvasPreview = ({page, currentPage}:{page:number, currentPage:number}) =>
     if(pdf) {
       const realPage = page
       if(!realPage) return
-      console.log("real page", realPage)
       pdf.getPage(realPage).then(function (page) {
-        // console.log('page loaded', realPage)
         const scale = 1
         const viewport = page.getViewport({ scale })
-        // Prepare canvas using PDF dimensions
         if(canvas && ctx) {
-          // console.log('check viewport', viewport)
           canvas.height = viewport.height
           canvas.width = viewport.width
           const renderContext = {
@@ -45,9 +39,7 @@ const CanvasPreview = ({page, currentPage}:{page:number, currentPage:number}) =>
           }
           page.render(renderContext).promise.then(function() {
             const bg = canvas.toDataURL("image/png")
-            // console.log("ppp", realPage)
             if(outputArr.length !== pdf?._pdfInfo.numPages) {
-              // console.log("eeee", realPage, pdf?._pdfInfo.numPages)
               const outputObj = {
                 page: realPage,
                 isEdit: false,

@@ -1,7 +1,7 @@
 import { useAtom } from "jotai"
 import { outputDocumentArr, pdfAtom, outputInfoAtom, setOutputInfo } from "@/store/index"
 import ArrowIcon from "@/components/svg/Arrow"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 const DownloadResult = () => {
   const [pdf] = useAtom(pdfAtom)
   const [outputInfo] = useAtom(outputInfoAtom)
@@ -26,7 +26,8 @@ const DownloadResult = () => {
         <h4 className="mb-[21px] text-[#4F4F4F]">文件名稱<span className="ml-[4px] text-[#FF7070]">*</span></h4>
         <div className="flex justify-between">
           <input 
-            onChange={(e) => displayOutputInfo({docName: e.target.value, isSubmit: false})} 
+            onChange={(e) => displayOutputInfo({docName: e.target.value})} 
+            value={outputInfo.docName}
             type="text" 
             placeholder="輸入文件名稱" 
             className={`signInput w-full max-w-[353px] h-[40px] pr-[70px] rounded-[5px] ${outputInfo.isSubmit && !outputInfo.docName ? 'border border-[#f00]' : ''}`} 

@@ -15,6 +15,7 @@ import {
   setOutputDocumentArr,
   setOutputInfo
 } from '@/store/index'
+
 const StartSign = () => {
   const [pdf] = useAtom(pdfAtom)
   const [outputArr] = useAtom(outputDocumentArr)
@@ -26,6 +27,7 @@ const StartSign = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [isDeleteClick, setIsDeleteClick] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     console.log("update pdf")
     setCurrentPage(1)

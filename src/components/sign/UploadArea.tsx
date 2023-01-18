@@ -4,7 +4,15 @@ import ArrowIcon from "@/components/svg/Arrow"
 import { useRef, useState, useEffect } from "react"
 import { pdfjs } from "react-pdf"
 import { useAtom } from "jotai"
-import { pdfAtom, setPdf, stepAtom, displayMessageBox } from '@/store/index'
+import { 
+  pdfAtom, 
+  setPdf, 
+  stepAtom, 
+  displayMessageBox, 
+  stepDirectionAtom,
+  setOutputDocumentArr,
+  setOutputInfo
+} from '@/store/index'
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 interface FormError {
   signName?: boolean;
@@ -35,6 +43,15 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const [, displayPdf] = useAtom(setPdf)
   const [step] = useAtom(stepAtom)
   const [, setMessageBox] = useAtom(displayMessageBox)
+  const [stepDirection] = useAtom(stepDirectionAtom)
+  const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
+  const [, displayOutputInfo] = useAtom(setOutputInfo)
+  useEffect(() => {
+    const {from, to} = stepDirection
+    if(from === 4 && to === 2) {
+      handleClearUpdateFile()
+    }
+  }, [step])
   useEffect(() => {
     console.log('latest pdf', pdf)
     setPdfLoading(true)
@@ -51,12 +68,23 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
 
   useEffect(() => {
     if(isClearUploadFile) {
-      setUploadFileType('')
-      if(thumbnailRef.current) {
-        thumbnailRef.current.src = ""
-      }
+      handleClearUpdateFile()
     }
   }, [isClearUploadFile])
+
+  const handleClearUpdateFile = () => {
+    setUploadFileType('')
+    if(thumbnailRef.current) {
+      thumbnailRef.current.src = ""
+    }
+    displayOutputDocumentArr({document: null})
+    displayOutputInfo({
+      isSubmit: false,
+      docName: "",
+      extension: "pdf"
+    })
+    displayPdf({pdf: null})
+  }
   const onDragEnter = () => {
     if(fileDivRef !== null) {
       setDraggingFile(true)
@@ -93,6 +121,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     }
   }
   const onFileDrop = (e: any) => {
+    console.log("jjjjjjj")
     e.preventDefault()
     const newFile = e.target.files[0]
     const isFileLegal = handleIsFileLegal(newFile)
@@ -157,6 +186,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   }
 
   const handleFileImage = (file: any) => {
+    console.log("pppppppppppppppppp", file)
     const fileReader = new FileReader()
     file.type.includes("pdf") ? fileReader.readAsArrayBuffer(file) : fileReader.readAsDataURL(file)
     fileReader.onload = function () {

@@ -42,6 +42,7 @@ export const dialogAtom = atom<Dialog>({isDisplay: false, dialogName: '', props:
 export const signListAtom = atom<Sign[]>([])
 export const pdfAtom = atom<PDFDocumentProxy | null>(null)
 export const stepAtom = atom<number>(1)
+export const stepDirectionAtom = atom<{from: number | null, to: number | null}>({from: 1, to: null})
 export const pdfCombinePageAtom = atom<number>(1)
 export const signToPdfAtom = atom<{page: number, imageUrl: string} | null>(null)
 export const outputDocumentArr = atom<(OutputDocument | null)[]>([])
@@ -50,12 +51,21 @@ export const outputInfoAtom = atom<{isSubmit: boolean, docName: string, extensio
   docName: "",
   extension: "pdf"
 })
-export const setCurrentState = atom(
+
+export const setCurrentStep = atom(
   () => "",
   (get, set, {step}) => {
     set(stepAtom, step)
   }
 )
+
+export const setStepDirection = atom(
+  () => "",
+  (get, set, {from, to}) => {
+    set(stepDirectionAtom, {from, to})
+  }
+)
+
 export const displayMessageBox = atom(
   () => "",
   (get, set, props: MessageBox) => {
@@ -176,10 +186,11 @@ export const setOutputDocumentArr = atom(
 export const setOutputInfo = atom(
   () => "",
   (get, set, props: {isSubmit?: boolean, docName?: string, extension?: string}) => {
-    const currentInfo = get(outputInfoAtom)
+    let currentInfo = get(outputInfoAtom)
     set(outputInfoAtom, {...currentInfo, ...props})
     if(props.isSubmit) {
       const timer = setTimeout(() => {
+        currentInfo = get(outputInfoAtom)
         set(outputInfoAtom, {...currentInfo, isSubmit: false})
         clearTimeout(timer)
       }, 3000)
