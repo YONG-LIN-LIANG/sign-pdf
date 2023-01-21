@@ -29,7 +29,6 @@ const StartSign = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    console.log("update pdf")
     setCurrentPage(1)
     if(outputArr.length) {
       displayOutputDocumentArr({document: null})
@@ -43,12 +42,10 @@ const StartSign = () => {
   },[pdf])
   useEffect(() => {
     if(step === 3) {
-      console.log("ooo", outputArr.length, pdf?._pdfInfo.numPages)
       let timer: any = null
       if(outputArr.length < pdf?._pdfInfo.numPages) {
         timer = setTimeout(() => {
           setIsLoading(true)
-          console.log(outputArr.length, "kkk", pdf?._pdfInfo.numPages)
           setCurrentPage(prev => prev+1)
         },500)
         return () => clearTimeout(timer);
@@ -59,20 +56,15 @@ const StartSign = () => {
     }
   }, [step, currentPage])
   useEffect(() => {
-    console.log("isLoading", isLoading)
     if(!isLoading && step === 3) {
-      console.log("checkkkk")
       setCurrentPage(1)
       displayPdfCombinePage({page: 1})
-      console.log("result", outputArr)
     }
   }, [isLoading])
   
   useEffect(() => {
     const isEdit = outputArr.find(i => i?.page === signToPdf?.page)?.isEdit
-    console.log("isEdit", isEdit)
     if(signToPdf !== null && signToPdf.page !== 0 && !isEdit) {
-      console.log("signtopdf", signToPdf)
       // 更新pdfArr的page為編輯過
       // 到fabric component把背景還有sign都渲染出來
       const bgImage = outputArr.find(i => i?.page === signToPdf.page)?.imageUrl
@@ -81,7 +73,6 @@ const StartSign = () => {
         isEdit: true,
         imageUrl: bgImage
       }
-      console.log("outputObj", outputObj)
       displayOutputDocumentArr({document: outputObj})
     }
   }, [signToPdf])
@@ -108,7 +99,7 @@ const StartSign = () => {
   return (
     <section className="flex flex-col lg:flex-row lg:justify-center mx-auto mt-[40px] w-[80%] max-w-[586px] lg:max-w-[1000px]">
       <MySign type="allowSelect" />
-      <div className="flex-grow ml-[40px]">
+      <div className="flex-grow mt-[40px] lg:mt-0 lg:ml-[40px]">
         <h4 className="text-[#4F4F4F]">簽署文件</h4>
         <span className="text-[#828282]">將左方簽名檔拖移置簽署文件中並調整位置與大小</span>
         <div className="flex flex-col w-full h-[780px] pt-[16px] px-[42px] pb-[22px] mt-[20px] bg-white rounded-[5px]">
@@ -121,14 +112,14 @@ const StartSign = () => {
             {/* 每個頁面做成fabric.js的component，然後在最外層做隱藏或顯示 */}
             {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map((i, key) => (
               // 先全部顯示出來，並確實存到outputArr
-              <div className={outputArr.find(v => v?.page === key+1)?.isEdit === false && currentPage === key+1 && !isLoading ? '' : isLoading && (key + 1) ? 'flex-center' : 'hiddenSection'}>
+              <div key={key} className={outputArr.find(v => v?.page === key+1)?.isEdit === false && currentPage === key+1 && !isLoading ? '' : isLoading && (key + 1) ? 'flex-center' : 'hiddenSection'}>
                 <CanvasPreview page={key+1} currentPage={currentPage} />
               </div>
             ))}
             
             
-            {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map(i => (
-              <div className={outputArr.find(v => v?.page === i+1)?.isEdit === true && currentPage === i+1 ? '' : 'hiddenSection'}>
+            {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map((i, key) => (
+              <div key={key} className={outputArr.find(v => v?.page === i+1)?.isEdit === true && currentPage === i+1 ? '' : 'hiddenSection'}>
                 <FabricPage 
                   isDeleteClick={isDeleteClick} 
                   page={i+1} 

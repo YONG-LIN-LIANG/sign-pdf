@@ -53,7 +53,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     }
   }, [step])
   useEffect(() => {
-    console.log('latest pdf', pdf)
     setPdfLoading(true)
     handleRenderPdfPage()
   }, [pdf, currentPage]);
@@ -98,7 +97,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const onDragLeave = (e: any) => {
     e.preventDefault()
     e.stopPropagation()
-    console.log('leave')
     if(fileDivRef !== null) {
       setDraggingFile(false)
       fileDivRef.current?.classList.remove('dragover')
@@ -107,7 +105,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   const onDrop = (e: any) => {
     e.preventDefault()
     e.stopPropagation()
-    console.log("new file", e.dataTransfer.files[0])
     const isFileLegal = handleIsFileLegal(e.dataTransfer.files[0])
     if(!isFileLegal) return
     if(fileInputRef.current !== null) {
@@ -121,7 +118,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     }
   }
   const onFileDrop = (e: any) => {
-    console.log("jjjjjjj")
     e.preventDefault()
     const newFile = e.target.files[0]
     const isFileLegal = handleIsFileLegal(newFile)
@@ -143,7 +139,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
       setMessageBox({...alertMessageStyle, content: `請上傳${allowExtension.join("、")}格式之檔案`})
       return false
     }
-    console.log("compare", fileSize, limitSize)
     if(fileSize > limitSize) {
       setMessageBox({...alertMessageStyle, content: `檔案大小不得大於 3M bytes`})
       return false
@@ -151,12 +146,9 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
     return true
   }
   const handleRenderPdfPage = () => {
-    console.log('pdf instance', pdf)
     if(pdf) {
-      console.log("upload currentpage", currentPage)
       if(!currentPage) return
       pdf.getPage(currentPage).then(function (page) {
-        console.log('page loaded')
         // scale彈性調整， 假設圖片寬1000px，容器500px，scale為500/1000
         const testScale = 1
         const testViewport = page.getViewport({ scale: testScale})
@@ -164,10 +156,8 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
         const containerWidth = 300
         const scale = containerWidth / originalWidth
         const viewport = page.getViewport({ scale: scale})
-        console.log(canvas, ctx, canvas && ctx)
         // Prepare canvas using PDF dimensions
         if(canvas && ctx) {
-          console.log('check viewport', viewport)
           canvas.height = viewport.height
           canvas.width = viewport.width
           // Render PDF page into canvas context
@@ -177,7 +167,6 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
           }
           const renderTask = page.render(renderContext)
           renderTask.promise.then(function () {
-            console.log('page rendered')
             setPdfLoading(false)
           })
         }
@@ -186,36 +175,29 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
   }
 
   const handleFileImage = (file: any) => {
-    console.log("pppppppppppppppppp", file)
     const fileReader = new FileReader()
     file.type.includes("pdf") ? fileReader.readAsArrayBuffer(file) : fileReader.readAsDataURL(file)
     fileReader.onload = function () {
       if(this.result) {
         setUploadFileType(file.type)
         if(file.type.includes("pdf")) {
-          console.log('lll', typeof(this.result))
           // 這個型別搞很久
           const pdfData = new Uint8Array(this.result as ArrayBuffer)
-          console.log('uuu', pdfData)
           const loadingTask = pdfjs.getDocument(pdfData)
-          console.log('xxx', loadingTask)
           loadingTask.promise.then(
             function (pdf) {
-              console.log("PDF loaded", pdf)
               // setPdf 放到jotai裡全域使用
               displayPdf({pdf})
               setCurrentPage(1)
             },
             function (reason) {
               // PDF loading error
-              console.log(reason)
             }
           )
         }
         else if(file.type.includes("image") && thumbnailRef.current) {
           thumbnailRef.current.src = this.result.toString()
           onUploadSign(this.result.toString())
-          console.log('urll', this.result.toString())
         }
       }
     }

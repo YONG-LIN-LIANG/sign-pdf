@@ -39,13 +39,11 @@ const Sign = () => {
     displaySignList()
     if(progressBarRef) {
       const pathLength = progressBarRef.current.getTotalLength()
-      console.log('hhh', pathLength, pathLength/2, progressBarRef.current.class)
       progressBarRef.current.style.strokeDasharray = pathLength;
       progressBarRef.current.style.animation = `zeroToStep${currentStep} ${currentStep/2}s linear forwards`
     }
   },[])
   const handleSwitchStep = (nextStep: number) => {
-    console.log("current", currentStep, "nextStep", nextStep)
     if(currentStep === 1 && !signList.length) {
       // 檢查有沒有簽名
       setMessageBox({...alertMessage, content: '請建立簽名檔'})
@@ -93,7 +91,6 @@ const Sign = () => {
     displayOutputInfo({isSubmit: true})
     const {docName, extension} = outputInfo
     if(!docName || !extension) {
-      console.log("pause", {docName, extension}, outputInfo)
       setMessageBox({...alertMessage, content: '請填寫文件名稱'})
       return
     }
@@ -122,7 +119,6 @@ const Sign = () => {
         for(const [index, item] of outputArr.entries()) {
           if(item) {
             const {width , height} = item
-            console.log("width height", width, height, `key${index}`)
             pdf.addImage(item?.imageUrl, "JPEG", 0, 0, width, height);
             if(item.page < outputArr.length) {
               // 設定第一張之外的pdf頁面尺寸
@@ -159,7 +155,7 @@ const Sign = () => {
             {/* 目前進度 */}
             <div className="relative z-[10]">
               <svg width="543" height="63" viewBox="0 0 543 63" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path ref={progressBarRef} d="M539.817 58.801C523.388 49.5565 509.817 37.917 508.483 22.1103C507.15 6.3036 511.817 3.33386 514.245 3.33386C516.674 3.33386 521.483 7.74058 521.579 21.0086C521.674 34.2767 517.579 47.9279 490.341 55.1606C463.102 62.3934 395.96 58.8489 379.674 55.7833C360.722 52.1909 343.864 40.6472 344.626 20.6254C345.531 -2.12663 359.531 3.62126 359.436 20.6254C359.388 29.7741 356.007 40.9825 338.198 50.227C319.055 60.1421 271.341 59.6632 271.341 59.6632C271.341 59.6632 223.817 60.1421 204.722 50.227C186.96 40.9825 183.579 29.822 183.579 20.6254C183.483 3.62126 197.483 -2.12663 198.341 20.6254C199.102 40.6472 182.293 52.1909 163.436 55.7833C147.198 58.8489 80.293 62.3934 53.1501 55.1606C26.0073 47.9279 21.912 34.3246 22.0072 21.0086C22.1025 7.69268 26.8644 3.33386 29.293 3.33386C31.7215 3.33386 36.3882 6.3036 35.0549 22.1103C33.7215 37.917 20.2453 49.5565 3.81677 58.801" stroke="#787CDA" stroke-width="6" stroke-miterlimit="10" stroke-linecap="round"/>
+                <path ref={progressBarRef} d="M539.817 58.801C523.388 49.5565 509.817 37.917 508.483 22.1103C507.15 6.3036 511.817 3.33386 514.245 3.33386C516.674 3.33386 521.483 7.74058 521.579 21.0086C521.674 34.2767 517.579 47.9279 490.341 55.1606C463.102 62.3934 395.96 58.8489 379.674 55.7833C360.722 52.1909 343.864 40.6472 344.626 20.6254C345.531 -2.12663 359.531 3.62126 359.436 20.6254C359.388 29.7741 356.007 40.9825 338.198 50.227C319.055 60.1421 271.341 59.6632 271.341 59.6632C271.341 59.6632 223.817 60.1421 204.722 50.227C186.96 40.9825 183.579 29.822 183.579 20.6254C183.483 3.62126 197.483 -2.12663 198.341 20.6254C199.102 40.6472 182.293 52.1909 163.436 55.7833C147.198 58.8489 80.293 62.3934 53.1501 55.1606C26.0073 47.9279 21.912 34.3246 22.0072 21.0086C22.1025 7.69268 26.8644 3.33386 29.293 3.33386C31.7215 3.33386 36.3882 6.3036 35.0549 22.1103C33.7215 37.917 20.2453 49.5565 3.81677 58.801" stroke="#787CDA" strokeWidth="6" strokeMiterlimit="10" strokeLinecap="round"/>
               </svg>
             </div>
             <div className="flex justify-between">

@@ -34,8 +34,8 @@ const DownloadResult = () => {
           />
           <ul className="flex">
             {
-              ["pdf", "jpg"].map(i => (
-                <li onClick={() => handleSelectExtension(i)} className="extension-selector flex items-center cursor-pointer">
+              ["pdf", "jpg"].map((i, key) => (
+                <li key={key} onClick={() => handleSelectExtension(i)} className="extension-selector flex items-center cursor-pointer">
                   <div className="w-[21px] h-[21px] mr-[14px] p-[4px] border rounded-full border-[#595ED3]">
                     <div className={`w-full h-full bg-[#595ED3] rounded-full ${i === outputInfo.extension ? "block" : "hidden"}`}></div>
                   </div>

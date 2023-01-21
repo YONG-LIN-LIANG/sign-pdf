@@ -78,7 +78,6 @@ export const displayMessageBox = atom(
 export const displayDialog = atom(
   () => "",
   (get, set, props: Dialog) => {
-    console.log('jjj', props)
     set(dialogAtom, props)
   }
 )
@@ -102,13 +101,11 @@ export const addSign = atom(
     if(signList !== null) {
       const currentList = JSON.parse(signList)
       currentList.unshift(props)
-      console.log('zzz', currentList)
       set(signListAtom, currentList)
       localStorage.setItem('signList', JSON.stringify(currentList))
     }else {
       localStorage.setItem('signList', JSON.stringify([props]))
       set(signListAtom, [props])
-      console.log('yyy', signList)
     }
   }
 )
@@ -160,7 +157,6 @@ export const setOutputDocumentArr = atom(
     }
     const {page, isEdit, imageUrl, width, height} = document
     const find = get(outputDocumentArr).find(i => i && i.page === page)
-    console.log("output result", find, document, get(outputDocumentArr))
     let newDocuments
     
     if(find) {
