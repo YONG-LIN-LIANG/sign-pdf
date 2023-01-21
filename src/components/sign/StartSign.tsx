@@ -6,7 +6,16 @@ import CanvasPreview from "@/components/sign/CanvasPreview"
 import ArrowIcon from "@/components/svg/Arrow"
 import FabricPage from "@/components/sign/FabricPage"
 import { useAtom } from "jotai"
-import { pdfAtom, outputDocumentArr, stepAtom, setPdfCombinePage, signToPdfAtom, setOutputDocumentArr } from '@/store/index'
+import { 
+  pdfAtom, 
+  outputDocumentArr, 
+  stepAtom, 
+  setPdfCombinePage, 
+  signToPdfAtom, 
+  setOutputDocumentArr,
+  setOutputInfo
+} from '@/store/index'
+
 const StartSign = () => {
   const [pdf] = useAtom(pdfAtom)
   const [outputArr] = useAtom(outputDocumentArr)
@@ -14,24 +23,38 @@ const StartSign = () => {
   const [signToPdf] = useAtom(signToPdfAtom)
   const [, displayPdfCombinePage] = useAtom(setPdfCombinePage)
   const [, displayOutputDocumentArr] = useAtom(setOutputDocumentArr)
-  
+  const [, displayOutputInfo] = useAtom(setOutputInfo)
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [isDeleteClick, setIsDeleteClick] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    console.log("update pdf")
+    setCurrentPage(1)
+    if(outputArr.length) {
+      displayOutputDocumentArr({document: null})
+      displayOutputInfo({
+        isSubmit: false,
+        docName: "",
+        extension: "pdf"
+      })
+    }
+    
+  },[pdf])
+  useEffect(() => {
     if(step === 3) {
-      
-      console.log("check", outputArr.length, currentPage, pdf?._pdfInfo.numPages)
-      const startPoint = outputArr.length > 1 ? outputArr.length + 1 : outputArr.length
+      console.log("ooo", outputArr.length, pdf?._pdfInfo.numPages)
+      let timer: any = null
       if(outputArr.length < pdf?._pdfInfo.numPages) {
-        const timer = setTimeout(() => {
+        timer = setTimeout(() => {
           setIsLoading(true)
+          console.log(outputArr.length, "kkk", pdf?._pdfInfo.numPages)
           setCurrentPage(prev => prev+1)
         },500)
         return () => clearTimeout(timer);
       } else {
         setIsLoading(false)
+        clearTimeout(timer);
       }
     }
   }, [step, currentPage])
@@ -94,11 +117,11 @@ const StartSign = () => {
             <button className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] text-[#BDBDBD]`}><NextIcon /></button> */}
             <button onClick={handleDeleteSign} className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`}>清除</button>
           </div>
-          <div className={`relative flex-grow w-full h-full border border-[#E0E0E0] ${isLoading ? 'overflow-hidden' : 'overflow-auto'}`}>
+          <div className={`relative flex-grow w-full h-full border border-[#E0E0E0] ${isLoading ? 'overflow-hidden' : 'max-w-[670px]  overflow-auto'}`}>
             {/* 每個頁面做成fabric.js的component，然後在最外層做隱藏或顯示 */}
             {Array.from(Array(pdf?._pdfInfo.numPages).keys()).map((i, key) => (
               // 先全部顯示出來，並確實存到outputArr
-              <div className={outputArr.find(v => v?.page === key+1)?.isEdit === false && currentPage === key+1 && !isLoading ? '' : isLoading && (key + 1) ? '' : 'hiddenSection'}>
+              <div className={outputArr.find(v => v?.page === key+1)?.isEdit === false && currentPage === key+1 && !isLoading ? '' : isLoading && (key + 1) ? 'flex-center' : 'hiddenSection'}>
                 <CanvasPreview page={key+1} currentPage={currentPage} />
               </div>
             ))}
