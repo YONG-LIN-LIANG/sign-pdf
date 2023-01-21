@@ -39,10 +39,8 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
 
   // 新增簽名到fabric canvas
   useEffect(() => {
-    console.log("rrrrrr", signToPdf?.page, page)
     if(signToPdf?.page === page) {
       const { imageUrl } = signToPdf
-      console.log("imageUrl", imageUrl)
       if(canvas) {
         // 新增簽名至fabric canvas
         // const canvasCenter = canvas.getCenter()
@@ -59,7 +57,6 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
             
           })
           img.on('mouseup', function() {
-            console.log('mouse up');
             handleUpdateDocumentArr()
           });
           canvas.add(img).renderAll()
@@ -80,7 +77,6 @@ const FabricPage = ({isDeleteClick, page, bgImage, isEdit}:{isDeleteClick:boolea
   }
   
   const handleUpdateDocumentArr = () => {
-    console.log("here??????")
     if(canvas) {
       const imageUrl = canvas.toDataURL({format: "jpg"})
       // 每 mouseup 就將canvas輸出成圖片放到陣列裡找到page

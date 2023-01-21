@@ -10,19 +10,16 @@ const MySign = ({type, onSelectSign}: {type?:string, onSelectSign?: Function}) =
   const [step] = useAtom(stepAtom)
   const [pdfCombinePage] = useAtom(pdfCombinePageAtom)
   const handleOpenDialog = (id: number) => {
-    console.log('ddd')
     setDialog({isDisplay: true, dialogName: 'removeSign', props: {id}})
   }
 
   const handleSelectSign = (e: any, imageUrl: string) => {
     if (onSelectSign && type === "allowSelect") {
-      console.log("event", e, e.target)
       onSelectSign(imageUrl)
     }
   }
 
   const handleAddToPdf = (image: string) => {
-    console.log("uuu", {page: pdfCombinePage, imageUrl: image})
     displaySignToPdf({page: pdfCombinePage, imageUrl: image})
   }
   return (

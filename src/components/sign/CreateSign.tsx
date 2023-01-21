@@ -77,14 +77,12 @@ const CreateSign = () => {
   }, [ctx])
   useEffect(() => {
     ctx?.putImageData(recordDrawPath[recordIndex], 0, 0)
-    console.log(recordDrawPath.length === 1 && !signName)
   }, [recordIndex])
   const [signName, setSignName] = useState('')
   const tabStyle = "relative z-[5] flex items-center px-[20px] py-[8px] rounded-full cursor-pointer"
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     setDrawing(true)
-    console.log(drawing)
     const touchPos = getTouchPos(canvas, e)
     ctx?.beginPath()
     ctx?.moveTo(touchPos.x, touchPos.y)
@@ -104,11 +102,9 @@ const CreateSign = () => {
   }
   const handleTouchEnd = () => {
     setDrawing(false)
-    console.log(drawing)
   }
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setDrawing(true)
-    console.log(drawing)
     const mousePos = getMousePos(canvas, e)
     if(ctx !== null) {
       ctx.beginPath()
@@ -163,7 +159,6 @@ const CreateSign = () => {
     setFormError((prevState) => ({...prevState, signName: Boolean(signName), drawingBoard: recordDrawPath.length > 1}))
     setIsButtonClick((prevState) => ({...prevState, drawingArea: true}))
     const timer = setTimeout(() => {
-      console.log('run timer')
       setIsButtonClick((prevState) => ({...prevState, drawingArea: false}))
       clearTimeout(timer)
     }, 3000)
@@ -191,7 +186,6 @@ const CreateSign = () => {
     setFormError((prevState) => ({...prevState, signName: Boolean(signName), uploadArea: Boolean(imgSrc)}))
     setIsButtonClick((prevState) => ({...prevState, uploadArea: true}))
     const timer = setTimeout(() => {
-      console.log('run timer')
       setIsButtonClick((prevState) => ({...prevState, uploadArea: false}))
       clearTimeout(timer)
     }, 3000)

@@ -11,9 +11,7 @@ const Dialog = () => {
       setDialog({isDisplay: false, dialogName: '', props: {}})
     }
   }
-  useEffect(() => {
-    console.log('dddcheck', dialog.isDisplay, dialog.dialogName === 'removeSign')
-  }, [dialog])
+
   return (
     <section>
       {
