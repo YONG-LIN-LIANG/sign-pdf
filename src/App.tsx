@@ -23,7 +23,8 @@ function App() {
     <JotaiProvider>
       <Layout>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* <Route path="/" element={<Navigate to="/login" />} /> */}
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/overview" element={<Overview />} />
           <Route path="/sign" element={<Sign />} />
