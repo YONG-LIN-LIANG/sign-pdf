@@ -1,5 +1,5 @@
 import Header from "./Header"
-import BackgroundImage from "@/components/svg/Background"
+import BackgroundImage from "@/components/svg/LoginBackground"
 const Layout = (props: any) => (
   <section className="flex flex-col min-h-screen">
     <Header />
