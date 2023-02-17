@@ -4,5 +4,16 @@
     "loading": "讀取中",
     "login": "登入",
     "logout": "登出"
+  },
+  "login": {
+    "register": "註冊",
+    "select_stored_sign": "使用已新增的簽名檔",
+    "build_and_keep_sign": "建立並保存簽名檔",
+    "check_signed_docs": "查看過去簽署文件",
+    "email": "信箱",
+    "password": "密碼",
+    "quick_sign": "快速簽名",
+    "sign_as_visitor": "免登入快速簽名",
+    "start_sign": "前往簽名"
   }
 }

@@ -4,16 +4,16 @@
     "loading": "Loading",
     "login": "Login",
     "logout": "Logout",
-    "title": "Sign Docs"
+    "title": "Have A Sign"
   },
   "login": {
     "register": "Register",
-    "select_stored_sign": "Allow to use stored signs",
-    "build_and_keep_sign": "Allow to build and save your customized signs",
-    "check_signed_docs": "Allow to check signed documents",
+    "select_stored_sign": "Allow to use stored signatures",
+    "build_and_keep_sign": "Allow to build and save your customized signatures",
+    "check_signed_docs": "Allow to review signed documents",
     "email": "Email",
     "password": "Password",
-    "quick_sign": "Quick sign",
+    "quick_sign": "Quick Start",
     "sign_as_visitor": "Quick sign as visitor",
     "start_sign": "Start sign"
   }
