@@ -1,7 +1,9 @@
 import CheckedIcon from "../components/svg/Checked"
 import BackgroundImage from "@/components/svg/LoginBackground"
 import { Link } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 const Login = () => {
+  const { t } = useTranslation()
   const featureList = [
     '使用已新增的簽名檔', '建立並保存簽名檔', '查看過去簽署文件'
   ]
@@ -33,7 +35,7 @@ const Login = () => {
           </div>
           <div className="w-full max-w-[180px] mx-auto mt-[38px]">
             <Link to="/" className="block w-full px-[10px] text-left text-[#8DAC82] text-[14px]">註冊</Link>
-            <button className={`${buttonStyle} mt-[10px]`}>登入</button>
+            <button className={`${buttonStyle} mt-[10px]`}>{t('common.login')}</button>
           </div>
         </form>
         <div className={`${quickSignCardStyle} mt-[30px] mmd:mt-0 mmd:ml-[30px]`}>

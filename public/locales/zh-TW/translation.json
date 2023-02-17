@@ -1,0 +1,8 @@
+{
+  "common": {
+    "error": "錯誤",
+    "loading": "讀取中",
+    "login": "登入",
+    "logout": "登出"
+  }
+}
