@@ -2,6 +2,7 @@ import { useAtom } from "jotai"
 import { outputDocumentArr, pdfAtom, outputInfoAtom, setOutputInfo } from "@/store/index"
 import ArrowIcon from "@/components/svg/Arrow"
 import { useState } from "react"
+import { t } from "i18next"
 const DownloadResult = () => {
   const [pdf] = useAtom(pdfAtom)
   const [outputInfo] = useAtom(outputInfoAtom)
@@ -23,7 +24,7 @@ const DownloadResult = () => {
   return (
     <section className="flex flex-col mx-auto w-[80%] max-w-[586px] lg:max-w-[586px]">
       <div className="flex flex-col mb-[32px]">
-        <h4 className="mb-[21px] text-[#4F4F4F]">文件名稱<span className="ml-[4px] text-[#FF7070]">*</span></h4>
+        <h4 className="mb-[21px] text-[#4F4F4F]">{t('sign.signature_step4_document_name')}<span className="ml-[4px] text-[#FF7070]">*</span></h4>
         <div className="flex flex-col md:flex-row justify-between">
           <input 
             onChange={(e) => displayOutputInfo({docName: e.target.value})} 
@@ -47,7 +48,7 @@ const DownloadResult = () => {
         </div>
       </div>
       <div>
-      <h4 className="mb-[21px] text-[#4F4F4F]">預覽文件</h4>
+      <h4 className="mb-[21px] text-[#4F4F4F]">{t('sign.signature_preview_document')}</h4>
         <div className="flex flex-col items-center pt-[20px] px-[42.5px] bg-white">
           <div className="flex-center w-full h-auto border border-[#E0E0E0] overflow-auto">
             {outputArr.length && outputArr.map((i, key) => (

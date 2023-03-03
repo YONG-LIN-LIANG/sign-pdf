@@ -9,11 +9,14 @@ import ActiveColorPickerIcon from "@/components/svg/ActiveColorPicker"
 import getTouchPos from "../../utils/getTouchPos"
 import getMousePos from "../../utils/getMousePos"
 import { useAtom } from "jotai"
-import { displayMessageBox, addSign, stepAtom } from '@/store/index'
+import { displayMessageBox, addSign, stepAtom, langAtom } from '@/store/index'
 import React, { useState, useRef, useEffect } from "react"
+import { useTranslation } from "react-i18next"
 const CreateSign = () => {
+  const { t } = useTranslation()
   const [, setMessageBox] = useAtom(displayMessageBox)
   const [step] = useAtom(stepAtom)
+  const [lang] = useAtom(langAtom)
   const [, setAddSign] = useAtom(addSign)
   const [isCreateSign, setIsCreateSign] = useState<boolean>(true)
   const [drawingBoard, setDrawingBoard] = useState<{width: number, height: number}>({
@@ -80,7 +83,12 @@ const CreateSign = () => {
   }, [recordIndex])
   const [signName, setSignName] = useState('')
   const tabStyle = "relative z-[5] flex items-center px-[20px] py-[8px] rounded-full cursor-pointer"
-
+  const tabWidth = {
+    "en": {
+      "draw": "w-[132px]",
+      "upload": "w-[144px]"
+    }
+  }
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     setDrawing(true)
     const touchPos = getTouchPos(canvas, e)
@@ -200,6 +208,7 @@ const CreateSign = () => {
       setMessageBox({isDisplay: true, isMask: false, dialogName: 'success', content: '建立成功！', basicStyle: 'w-[140px] bg-[#E3FEC7] shadow-[0_4px_12px_rgba(0,0,0,0.1)]'})
     }
   }
+  
   return (
     <section className="max-w-[546px] lg:w-[820px] lg:max-w-[1000px] mx-auto">
       <ul className="relative flex w-max mx-auto bg-[#FFFFFF80] rounded-full px-[10px] py-[8.5px]">
@@ -210,7 +219,7 @@ const CreateSign = () => {
           onClick={() => setIsCreateSign(true)}
         >
           <div className={isCreateSign ? '#E5E6F2' : ''}><Pencil /></div>
-          <span className="ml-[8px]">手寫簽名</span>
+          <span className="ml-[8px]">{t('sign.signature_step1_handWritten')}</span>
         </li>
         <li 
           className={
@@ -219,10 +228,13 @@ const CreateSign = () => {
           onClick={() => setIsCreateSign(false)}
         >
           <div className={!isCreateSign ? '#E5E6F2' : ''}><UploadIcon /></div>
-          <span className="ml-[8px]">上傳簽名檔</span>
+          <span className="ml-[8px]">{t('sign.signature_step1_upload')}</span>
         </li>
         {/* 移動背景塊 */}
-        <div className={`animation absolute ${isCreateSign ? 'left-[10px] z-[2] w-[132px]' : 'left-[142px] z-[2] w-[144px]'} top-[8.5px] h-[40px] bg-[#595ED3] rounded-full`}></div>
+        <div className={`animation absolute ${
+          isCreateSign ? `left-[10px] z-[2]` : 'left-[142px] z-[2] w-[144px]'
+
+          } top-[8.5px] h-[40px] bg-[#595ED3] rounded-full`}></div>
       </ul>
 
       <div className="flex flex-col lg:flex-row lg:justify-center mx-auto mt-[40px] w-[80%] mmd:w-full lg:max-w-[1000px]">
@@ -231,7 +243,7 @@ const CreateSign = () => {
         {/* 右側 */}
         <div className="flex-grow mt-[40px] lg:mt-0 lg:ml-[40px]">
           <div>
-            <h4 className="text-[#4F4F4F]">簽名檔名稱<span className="ml-[4px] text-[#FF7070]">*</span></h4>
+            <h4 className="text-[#4F4F4F]">{t('sign.signature_step1_name')}<span className="ml-[4px] text-[#FF7070]">*</span></h4>
             <div className="relative max-w-[360px] h-[40px] mt-[20px]">
               <input 
                 type="text" 
@@ -247,7 +259,7 @@ const CreateSign = () => {
             </div>
           </div>
 
-          <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">簽名圖樣<span className="ml-[4px] text-[#FF7070]">*</span></h4>
+          <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">{t('sign.signature_step1_draw_sign')}<span className="ml-[4px] text-[#FF7070]">*</span></h4>
           {/* 手寫簽名 */}
           <div className={isCreateSign ? '' : 'invisible absolute -z-[10]'}>
             <div ref={drawingBoardRef} className={`relative w-full h-[340px] bg-[#fff] rounded-[5px] overflow-hidden ${!formError.drawingBoard && isButtonClick.drawingArea ? 'border border-[#f00]' : ''}`}>
@@ -268,7 +280,7 @@ const CreateSign = () => {
                   !drawing && <div className="flex absolute top-[14px] right-[14px]">
                   <button onClick={handleGoLastStep} className={`flex-center w-[32px] h-[32px] rounded-[5px] ${recordIndex === 0 ? 'text-[#BDBDBD] bg-[#F2F2F2]' : 'text-[#787CDA] bg-[#E9E1FF]'}`}><LastIcon /></button>
                   <button onClick={handleGoNextStep} className={`flex-center w-[32px] h-[32px] ml-[12px] rounded-[5px] ${!(recordDrawPath.length > 1 && recordIndex < recordDrawPath.length - 1) ? 'text-[#BDBDBD] bg-[#F2F2F2]' : 'text-[#787CDA] bg-[#E9E1FF]'}`}><NextIcon /></button>
-                  <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`} onClick={() => handleClear()}>清除</button>
+                  <button className={`flex-center w-[60px] h-[32px] ml-[12px] text-[14px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]`} onClick={() => handleClear()}>{t('sign.signature_step1_clear')}</button>
                 </div>
                 }
                 {
@@ -283,12 +295,12 @@ const CreateSign = () => {
                   </div>
                 }
             </div>
-            <button onClick={handleSaveSign} className={`flex-center w-[104px] h-[32px] mx-auto mt-[20px] text-[14px] rounded-[5px] ${recordDrawPath.length > 1 && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>建立簽名檔</button>
+            <button onClick={handleSaveSign} className={`flex-center h-[32px] px-[14px] mx-auto mt-[20px] text-[14px] rounded-[5px] ${recordDrawPath.length > 1 && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>{t('sign.signature_step1_create')}</button>
           </div>
         
           <div className={isCreateSign ? 'hidden' : ''}>
             <UploadArea uploadType={step === 1 ? "png／jpg" : "pdf"} onUploadSign={handleUploadSign} isClearUploadFile={isClearUploadFile} formError={formError} isButtonClick={isButtonClick.uploadArea} />
-            <button onClick={handleUploadSaveSign} className={`flex-center w-[104px] h-[32px] mx-auto mt-[70px] text-[14px] rounded-[5px] ${imgSrc && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>建立簽名檔</button>
+            <button onClick={handleUploadSaveSign} className={`flex-center h-[32px] px-[14px] mx-auto mt-[70px] text-[14px] rounded-[5px] ${imgSrc && signName ? 'text-[#fff] bg-[#595ED3]' : 'text-[#E0E0E0] bg-[#BDBDBD]'}`}>{t('sign.signature_step1_create')}</button>
           </div>
         </div>
       </div>

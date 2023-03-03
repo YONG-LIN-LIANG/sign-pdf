@@ -18,9 +18,9 @@ import {
   setStepDirection,
   setOutputDocumentArr
 } from '@/store/index'
-
+import { useTranslation } from "react-i18next"
 const Sign = () => {
-  // const [currentStep, setCurrentStep] = useState(1)
+  const { t } = useTranslation()
   const [signList] = useAtom(signListAtom)
   const [outputInfo] = useAtom(outputInfoAtom)
   const [, displaySignList] = useAtom(setSignList)
@@ -68,22 +68,22 @@ const Sign = () => {
   const stepList = [
     {
       id: 1,
-      name: '建立簽名檔',
+      name: `${t('sign.signature_step1')}`,
       style: 'left-[-17px]'
     },
     {
       id: 2,
-      name: '上傳簽署文件',
+      name: `${t('sign.signature_step2')}`,
       style: 'left-[-22px]'
     },
     {
       id: 3,
-      name: '簽名',
+      name: `${t('sign.signature_step3')}`,
       style: ''
     },
     {
       id: 4,
-      name: '下載簽署文件',
+      name: `${t('sign.signature_step4')}`,
       style: 'right-[-25px]'
     },
   ]
@@ -192,22 +192,22 @@ const Sign = () => {
       {/* step也用全局狀態管理 */}
       <div className="flex flex-col sm:flex-row justify-center items-center mt-[60px]">
         {
-          currentStep !== 1 && <button className="flex-center w-[180px] h-[40px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(currentStep - 1)}>上一步</button>
+          currentStep !== 1 && <button className="flex-center w-[180px] h-[40px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(currentStep - 1)}>{t('sign.signature_last')}</button>
         }
         {
-          currentStep === 1 && <button className={`flex-center w-[180px] h-[40px] ${currentStep === 1 && !signList.length ? 'text-[#fff] bg-[#BDBDBD]' : ''} ${currentStep !== 1 ? 'ml-[20px]' : ''} text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full`} onClick={() => handleSwitchStep(currentStep + 1)}>下一步</button>
+          currentStep === 1 && <button className={`flex-center w-[180px] h-[40px] ${currentStep === 1 && !signList.length ? 'text-[#fff] bg-[#BDBDBD]' : ''} ${currentStep !== 1 ? 'ml-[20px]' : ''} text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full`} onClick={() => handleSwitchStep(currentStep + 1)}>{t('sign.signature_next')}</button>
         }
         {
           currentStep === 2
-          ? <button className={`flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full ${!pdf ? 'text-[#fff] bg-[#BDBDBD]' : ''}`} onClick={() => handleSwitchStep(3)}>前往簽名</button>
+          ? <button className={`flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full ${!pdf ? 'text-[#fff] bg-[#BDBDBD]' : ''}`} onClick={() => handleSwitchStep(3)}>{t('sign.signature_head_to_sign')}</button>
           : currentStep === 3
-          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(4)}>前往下載</button>
+          ? <button className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full" onClick={() => handleSwitchStep(4)}>{t('sign.signature_head_to_download')}</button>
           : currentStep === 4
-          ? <button onClick={handleDownloadDocument} className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full">下載<span className="ml-[6px]">{outputInfo.extension}</span></button>
+          ? <button onClick={handleDownloadDocument} className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] bg-[#E3FEC7] rounded-full">{t('sign.signature_download')}<span className="ml-[6px]">{outputInfo.extension}</span></button>
           : null
         }
         {
-          currentStep === 4 && <button onClick={() => handleSwitchStep(2)} className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full">再簽一份</button>
+          currentStep === 4 && <button onClick={() => handleSwitchStep(2)} className="flex-center w-[180px] h-[40px] mt-[20px] sm:mt-0 sm:ml-[20px] text-[14px] text-[#4F4F4F] border border-[#E3FEC7] rounded-full">{t('sign.signature_sign_new_doc')}</button>
         }
       </div>
     </section>

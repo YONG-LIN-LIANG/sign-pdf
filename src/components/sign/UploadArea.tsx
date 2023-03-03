@@ -13,6 +13,7 @@ import {
   setOutputDocumentArr,
   setOutputInfo
 } from '@/store/index'
+
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 interface FormError {
   signName?: boolean;
@@ -26,8 +27,9 @@ interface Props {
   formError: FormError, 
   isButtonClick: boolean
 }
-
+import { useTranslation } from "react-i18next"
 const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, isButtonClick }: Props) => {
+  const { t } = useTranslation()
   const pdfCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const fileDivRef = useRef<HTMLDivElement | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -223,18 +225,18 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
         <div className="text-[#787CDA]">
           <UploadIcon />
         </div>
-        <span className="mt-[12px] mb-[8px]">拖曳至此上傳</span>
-        { !draggingFile && <span>或</span>}
-        { !draggingFile && <button onClick={() => fileInputRef.current?.click()} className="w-[86px] h-[32px] mt-[8px] mb-[20px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]">選擇檔案</button> }
+        <span className="mt-[12px] mb-[8px]">{t('sign.signature_drag_and_upload')}</span>
+        { !draggingFile && <span>{t('sign.signature_or')}</span>}
+        { !draggingFile && <button onClick={() => fileInputRef.current?.click()} className="h-[32px] px-[14px] mt-[8px] mb-[20px] text-[#595ED3] bg-[#E9E1FF] rounded-[5px]">{t('sign.signature_select_file')}</button> }
         <div className="flex flex-col text-[12px] text-[#595ED3]">
-          <span>檔案格式 {uploadType}</span>
-          <span>檔案大小 ＜3MB</span>
+          <span>{t('sign.signature_step1_file_type')} {uploadType}</span>
+          <span>{t('sign.signature_step1_file_size')} ＜3MB</span>
         </div>
         {/* ".png, .jpg, application/pdf" */}
         <input ref={fileInputRef} type="file" accept={step === 1 ? ".png, .jpg" : "application/pdf"} className="absolute -z-[10]" onChange={onFileDrop} />
       </div>
 
-      <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">{uploadType === 'pdf' ? '預覽文件' : '預覽簽名檔'}</h4>
+      <h4 className="mt-[32px] mb-[20px] text-[#4F4F4F]">{uploadType === 'pdf' ? `${t('sign.signature_preview_document')}` : `${t('sign.signature_preview_signature')}`}</h4>
       <div className="flex-center">
         <div  className={`${uploadFileType.includes('pdf') ? '' : 'invisible absolute -z-[10] h-0 overflow-hidden'} text-center`}>
           <div className="flex flex-col">
@@ -260,7 +262,7 @@ const UploadArea = ({ uploadType, onUploadSign, isClearUploadFile, formError, is
           !uploadFileType && (
             <div className="flex flex-col items-center text-[#595ED3]">
               <TrashcanIcon />
-              <span className="mt-[12px]">請上傳檔案</span>
+              <span className="mt-[12px]">{t('sign.signature_upload_file')}</span>
             </div>
           )
         }

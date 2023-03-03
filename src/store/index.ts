@@ -51,6 +51,7 @@ export const outputInfoAtom = atom<{isSubmit: boolean, docName: string, extensio
   docName: "",
   extension: "pdf"
 })
+export const langAtom = atom<string>(window.navigator.language)
 
 export const setCurrentStep = atom(
   () => "",

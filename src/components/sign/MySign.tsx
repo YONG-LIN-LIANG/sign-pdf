@@ -2,6 +2,7 @@ import SignTrashcanIcon from "@/components/svg/SignTrashcan"
 import PlusIcon from "@/components/svg/Plus"
 import { useAtom } from "jotai"
 import { stepAtom, Sign, signListAtom, displayDialog, pdfCombinePageAtom, setSignToPdf } from "@/store/index"
+import { t } from "i18next"
 
 const MySign = ({type, onSelectSign}: {type?:string, onSelectSign?: Function}) => {
   const [signList,] = useAtom(signListAtom)
@@ -24,7 +25,7 @@ const MySign = ({type, onSelectSign}: {type?:string, onSelectSign?: Function}) =
   }
   return (
     <div className="flex flex-col flex-none w-full lg:w-[188px]">
-      <h4 className="flex-none text-[#4F4F4F]">我的簽名檔</h4>
+      <h4 className="flex-none text-[#4F4F4F]">{t('sign.signature_list')}</h4>
       <div className="flex-grow mt-[20px] lg:pt-[12px] pr-[4px] border border-[#FFFFFF] rounded-[5px]">
         <ul className="ctr-scrollbar overflow-x-auto lg:overflow-y-auto flex lg:flex-col items-center w-full max-h-[164px] lg:h-[500px] lg:max-h-full p-[12px] lg:p-0">
           {

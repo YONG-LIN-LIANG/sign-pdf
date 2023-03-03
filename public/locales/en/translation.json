@@ -16,5 +16,42 @@
     "quick_sign": "Quick Start",
     "sign_as_visitor": "Quick sign as visitor",
     "start_sign": "Start sign"
+  },
+  "sign": {
+    "signature_list": "My Signatures",
+    "signature_upload_file": "Upload file please",
+    "signature_select_file": "Select file",
+    "signature_preview_document": "Preview document",
+    "signature_preview_signature": "Preview signature",
+    "signature_drag_and_upload": "Drag and Upload",
+    "signature_or": "Or",
+    "signature_step1": "Create signature",
+    "signature_step2": "Upload document",
+    "signature_step3": "Sign document",
+    "signature_step4": "Download signed document",
+    "signature_step1_handWritten": "Handwritten signature",
+    "signature_step1_upload": "Upload a signature",
+    "signature_step1_draw_sign": "Draw a signature",
+    "signature_step1_name": "Signature name",
+    "signature_step1_draw": "Draw signature",
+    "signature_step1_create": "Create signature",
+    "signature_step1_clear": "Clear",
+    "signature_step1_file_type": "Type required",
+    "signature_step1_file_size": "Size required",
+    "signature_step2_upload_document": "Upload the document to be signed",
+    "signature_step3_sign_warning_left": "Drag and drop the signature on the left to the signature field in the document and adjust its position and size",
+    "signature_step3_sign_warning_top": "Drag and drop the signature on the top to the signature field in the document and adjust its position and size",
+    "signature_step3_start_sign": "Let's start sign！",
+    "signature_step4_document_name": "Document name",
+    "signature_last": "Last",
+    "signature_next": "Next",
+    "signature_head_to_sign": "Head to sign",
+    "signature_head_to_download": "Head to download",
+    "signature_download": "Download",
+    "signature_sign_new_doc": "Sign new document"
+  },
+  "dialog": {
+    "warning_upload": "Please upload the document to be signed",
+    "warning_required": "Please complete the required fields."
   }
 }

@@ -15,5 +15,9 @@
     "quick_sign": "快速簽名",
     "sign_as_visitor": "免登入快速簽名",
     "start_sign": "前往簽名"
+  },
+  "sign": {
+    "draw_sign": "手寫簽名",
+    "upload_sign": "上傳簽名檔"
   }
 }

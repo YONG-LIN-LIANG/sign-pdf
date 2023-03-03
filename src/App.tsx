@@ -13,7 +13,6 @@ import Layout from "./components/layout/Layout"
 
 
 function App() {
-
   return (
     <JotaiProvider>
       <Layout>

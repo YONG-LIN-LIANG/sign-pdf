@@ -15,6 +15,7 @@ import {
   setOutputDocumentArr,
   setOutputInfo
 } from '@/store/index'
+import { t } from "i18next"
 
 const StartSign = () => {
   const [pdf] = useAtom(pdfAtom)
@@ -100,8 +101,9 @@ const StartSign = () => {
     <section className="flex flex-col lg:flex-row lg:justify-center mx-auto mt-[40px] w-[80%] max-w-[586px] lg:max-w-[1000px]">
       <MySign type="allowSelect" />
       <div className="flex-grow mt-[40px] lg:mt-0 lg:ml-[40px]">
-        <h4 className="text-[#4F4F4F]">簽署文件</h4>
-        <span className="text-[#828282]">將左方簽名檔拖移置簽署文件中並調整位置與大小</span>
+        <h4 className="text-[#4F4F4F]">{t('sign.signature_step3_start_sign')}</h4>
+        <span className="hidden lg:block text-[#828282]">{t('sign.signature_step3_sign_warning_left')}</span>
+        <span className="block lg:hidden text-[#828282]">{t('sign.signature_step3_sign_warning_top')}</span>
         <div className="flex flex-col w-full h-[780px] pt-[16px] px-[42px] pb-[22px] mt-[20px] bg-white rounded-[5px]">
           <div className="flex-none flex justify-end h-[32px] mb-[12px]">
             {/* <button className={`flex-center w-[32px] h-[32px] rounded-[5px] text-[#BDBDBD] bg-[#F2F2F2]`}><LastIcon /></button>
