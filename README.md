@@ -1,6 +1,6 @@
 # Autograph
 
-This is the side project to back then for a front-end match in Taiwan. This project is purely front-end without hosting any Back-End, mainly focusing on the design and front-end features of how to perform the behavior of the digital signature.
+This is a side project created for a front-end competition in Taiwan. The project is purely front-end, focusing on implementing digital signature functionality without requiring any back-end support. It showcases the design and front-end features needed to perform and manage digital signatures effectively.
 
 ## Table of Contents
 - [About the Project](#about-the-project)
@@ -17,17 +17,33 @@ This is the side project to back then for a front-end match in Taiwan. This proj
 
 [![Project Screenshot](link-to-screenshot.png)](link-to-screenshot.png)
 
-Provide a detailed description of your project, why it exists, and any key highlights. Mention problems it solves or use cases it targets.
+**Autograph** is a lightweight front-end application designed to demonstrate digital signature functionality. It addresses the need for secure and straightforward signing of PDFs directly within the browser, making it ideal for environments where back-end support is unavailable or unnecessary.
+
+The project explores intuitive design patterns and front-end techniques to simulate the behavior of digital signatures. It was initially developed for a competition to highlight innovative solutions in front-end development.
 
 ## Features
-- Feature 1
-- Feature 2
-- Feature 3
+- **PDF Upload**: Allows users to upload their own PDF documents for signing.
+- **Digital Signature**: Enables users to create and place digital signatures on uploaded PDFs.
+- **Export Functionality**: Users can download signed PDFs directly to their devices.
+- **Responsive Design**: Works seamlessly across devices of various screen sizes.
 
 ## Getting Started
 
+To set up the project locally, follow these steps.
+
 ### Prerequisites
-List the tools or dependencies the user needs to have installed before using the project.
+Ensure you have the following installed on your system:
+- Node.js (v16 or later recommended)
+- npm (Node Package Manager)
+
+### Installation
+Clone the repository and install dependencies:
 ```bash
-# Example:
-npm install -g some-dependency
+# Clone the repo
+git clone https://github.com/YONG-LIN-LIANG/sign-pdf.git
+
+# Navigate to the project directory
+cd sign-pdf
+
+# Install dependencies
+npm install
