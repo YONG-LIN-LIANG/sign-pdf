@@ -55,7 +55,19 @@ The project explores intuitive design patterns and front-end techniques to simul
    - A fast and modern build tool used for bundling the React project.  
    - Provides an optimized development and production build pipeline.
 
-8. **React Hooks**  
+8. **Jotai**  
+   - A lightweight state management library for React.  
+   - Manages global application state efficiently and intuitively.
+
+9. **Docker**  
+   - Used for containerizing the application to ensure consistent deployment across environments.  
+   - Simplifies setting up and running the application in isolated containers.
+
+10. **Nginx**  
+   - Serves as the web server for hosting the application.  
+   - Handles static assets and optimizes request routing.
+
+11. **React Hooks**  
    - Includes `useState`, `useEffect`, and others for managing state and lifecycle events in functional components.
 
 ## Getting Started
