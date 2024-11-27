@@ -5,12 +5,11 @@ This is a side project created for a front-end competition in Taiwan. The projec
 ## Table of Contents
 - [About the Project](#about-the-project)
 - [Features](#features)
+- [Key Libraries and Tools](#key-libraries-and-tools)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ## About the Project
@@ -26,6 +25,38 @@ The project explores intuitive design patterns and front-end techniques to simul
 - **Digital Signature**: Enables users to create and place digital signatures on uploaded PDFs.
 - **Export Functionality**: Users can download signed PDFs directly to their devices.
 - **Responsive Design**: Works seamlessly across devices of various screen sizes.
+
+## Key Libraries and Tools
+1. **React**  
+   - The core library for building the user interface as a Single Page Application (SPA).  
+   - Enables component-based architecture and state management.
+
+2. **react-pdf**  
+   - Facilitates rendering and viewing PDF documents in the browser.  
+   - Handles PDF navigation and page rendering.
+
+3. **fabric.js**  
+   - A canvas-based library for creating and managing interactive drawing elements.  
+   - Used for implementing digital signature functionality.
+
+4. **html2canvas**  
+   - Converts HTML elements into images.  
+   - Enables capturing user signatures and embedding them into PDFs.
+
+5. **jspdf**  
+   - Generates and manipulates PDF documents directly on the client side.  
+   - Supports embedding signatures and downloading modified PDFs.
+
+6. **Tailwind CSS**  
+   - A utility-first CSS framework for responsive and modern styling.  
+   - Simplifies the creation of consistent and clean UI components.
+
+7. **Vite**  
+   - A fast and modern build tool used for bundling the React project.  
+   - Provides an optimized development and production build pipeline.
+
+8. **React Hooks**  
+   - Includes `useState`, `useEffect`, and others for managing state and lifecycle events in functional components.
 
 ## Getting Started
 
